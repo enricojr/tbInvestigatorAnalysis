@@ -79,6 +79,7 @@ int extractInfo(const char *fileNameIn,
     return 1;
   }
   TTree *tOut = new TTree("trackOnDUT", "trackOnDUT");
+  tOut -> Branch("eventID", &FrameNumber);
   Double_t time = 0;
   tOut -> Branch("time", &time);
   Double_t x;
@@ -117,18 +118,14 @@ int extractInfo(const char *fileNameIn,
 
   // cleaning memory
   cout << __PRETTY_FUNCTION__ << ": cleaning memory" << endl;
-  delete grTimeline;
-  //  delete tTracks;
-  //  delete tEvent;
-  //  delete tOut;
-  //  fileIn -> Close();
-  //  fileOut -> Close();
-  //  delete fileIn;
-  //  delete fileOut;
+  // delete grTimeline;
+  // delete tTracks;
+  // delete tEvent;
+  // delete tOut;
+  // fileIn -> Close();
+  // fileOut -> Close();
+  // delete fileIn;
+  // delete fileOut;
   
-  // summary
-  //  cout << __PRETTY_FUNCTION__ << ": input file = " << fileNameIn << endl;
-  //  cout << __PRETTY_FUNCTION__ << ": output file = " << fileNameOut << endl;
-
   return 0;
 }

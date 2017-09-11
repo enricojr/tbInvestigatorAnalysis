@@ -5,11 +5,11 @@ NEVENTS=$2
 
 if [ "$#" -ne 2 ]; then
     echo "Usage:"
-    echo "$ ./synchronize <RUN> <NEVENTS>"
+    echo "$ ./sync <RUN> <NEVENTS>"
     exit
 fi
 
-fileNameInTelescope=$(printf "../../../output/cosmic_%06d_000000-track-data-extracted.root" $RUN)
+fileNameInTelescope=$(printf "../../../output/cosmic_%06d_000000-track-data.root" $RUN)
 fileNameInDUT=$(printf "../../../output/DUT_%06d_000000.root" $RUN)
 fileNameInCfg=$(printf "../../../cfg/run_%06d.cfg" $RUN)
 fileNameOut=$(printf "../../../output/sync_%06d_000000.root" $RUN)

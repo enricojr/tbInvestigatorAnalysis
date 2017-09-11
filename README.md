@@ -37,7 +37,7 @@ source telescope-align.sh <runNumber>
 To track, check the number of the data run AND of the corresponding alignment run, then type
 source telescope-track.sh <runNumber-data> <runNumber-align>
 
-------- EXTRACTING DUT COORDINATES
+------- EXTRACTING DUT COORDINATES (this part not needed anymore, because it's included in the synchronization step)
 The last step is to calculate the track coordinates on the DUT. To do this, run
 ./extractInfo <runNumber>
 
@@ -108,6 +108,14 @@ root -l
 6B) else must debug
 
 ####### 4 - SYNCHRONIZATION
+This code synchronizes the DUT data with the telescope data.
+To synchronize run <runNumber>, type
+
+./synchronize <runNumber> <nEvents>
+
+When <nEvents> is zero, it will run over the full dataset.
+The synchronization is done spill-by-spill. The critical parameter is the dtSpill value in the configuration file, set by default to 10. (inter-spill distance at SPS should be > 18s)
+As soon as one spill is found where the number of events in the DUT doesn't match the number of events in the telescope, the script stops. For now, no re-synchronization logic is implemented, the following data is just discarded.
 
 ####### 5 - EFFICIENCY AND OTHER FINAL RESULTS
 
