@@ -1,0 +1,17 @@
+#!/bin/bash
+
+RUN=$1
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage:"
+    echo "$ ./extractInfo <RUN>"
+    exit
+fi
+
+fileNameIn=$(printf "../../output/cosmic_%06d_000000-track-data.root" $RUN)
+fileNameOut=$(printf "../../output/cosmic_%06d_000000-track-data-extracted.root" $RUN)
+
+root -l << EOF
+.L extractInfo.C++
+extractInfo("$fileNameIn", "$fileNameOut")
+EOF
