@@ -9,10 +9,10 @@ if [ "$#" -ne 2 ]; then
     exit
 fi
 
-fileNameInTelescope=$(printf "../../output/cosmic_%06d_000000-track-data-extracted.root" $RUN)
-fileNameInDUT=$(printf "../../output/DUT_%06d_000000.root" $RUN)
+fileNameInTelescope=$(printf "../../../output/cosmic_%06d_000000-track-data-extracted.root" $RUN)
+fileNameInDUT=$(printf "../../../output/DUT_%06d_000000.root" $RUN)
 fileNameInCfg=$(printf "../cfg/run_%06d.cfg" $RUN)
-fileNameOut=$(printf "../../output/sync_%06d_000000.root" $RUN)
+fileNameOut=$(printf "../../../output/sync_%06d_000000.root" $RUN)
 
 root -b << EOF
 .L synchronize.C++

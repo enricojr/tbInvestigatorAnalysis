@@ -1,12 +1,12 @@
 This code is meant to analyze test beam data from the TJ Investigator chip, acquired using a reference telescope.
 
 !!!!!!! WARNING !!!!!!! A few paths are hard-coded here and there. If things go wrong, the very first thing to check (and eventually modify) are the hard-coded paths.
+Suggestion: create an external output/ folder, since all output paths are hard-coded to write into such folder
 
 ####### 1 - FOLDER STRUCTURE
 
-There are three main folders:
+There are two main folders:
 config/ -> where the Proteus configuration files for the CERN FEI-4 telescope are stored
-output/ -> where all the output files are stored by default
 scripts/ -> where the codes are developed
 
 The script/ folder further contains:
@@ -32,6 +32,10 @@ source telescope-align.sh <runNumber>
 ------- TRACKING
 To track, check the number of the data run AND of the corresponding alignment run, then type
 source telescope-track.sh <runNumber-data> <runNumber-align>
+
+------- EXTRACTING DUT COORDINATES
+The last step is to calculate the track coordinates on the DUT. To do this, run
+./extractInfo <runNumber>
 
 ####### 3 - RECONSTRUCTION OF DUT DATA
 

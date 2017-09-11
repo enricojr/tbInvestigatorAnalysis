@@ -4,7 +4,7 @@ int draw(const unsigned int run){
   gStyle -> SetPalette(55);
   
   char fileName[1000];
-  sprintf(fileName, "../../output/DUT_%06d_000000.root", run);
+  sprintf(fileName, "../../../output/DUT_%06d_000000.root", run);
   cout << ": fileName = " << fileName << endl;
 
   TFile *file = TFile::Open(fileName);

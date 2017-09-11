@@ -7,7 +7,7 @@ FLAGS=$@ # e.g. -n 10000, to process only the first 10k events
 
 #rawfile=$(printf "../../raw/cosmic_%06d_000000.root" $RUN)
 rawfile=$(printf "/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/converted/cosmic_%06d_000000.root" $RUN)
-prefix=$(printf "../../output/cosmic_%06d_000000-" $RUN)
+prefix=$(printf "../../../output/cosmic_%06d_000000-" $RUN)
 
 echo "using $(which pt-align)"
 

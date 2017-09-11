@@ -8,8 +8,8 @@ if [ "$#" -ne 1 ]; then
     exit
 fi
 
-fileNameIn=$(printf "../../output/cosmic_%06d_000000-track-data.root" $RUN)
-fileNameOut=$(printf "../../output/cosmic_%06d_000000-track-data-extracted.root" $RUN)
+fileNameIn=$(printf "../../../output/cosmic_%06d_000000-track-data.root" $RUN)
+fileNameOut=$(printf "../../../output/cosmic_%06d_000000-track-data-extracted.root" $RUN)
 
 root -l << EOF
 .L extractInfo.C++
