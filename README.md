@@ -4,7 +4,7 @@ This code is meant to analyze test beam data from the TJ Investigator chip, acqu
 A few paths are hard-coded here and there. If things go wrong, the very first thing to check (and eventually modify) are the hard-coded paths.
 In particular, make sure that the raw data paths point to the correct eos/ location
 Suggestion 1: create an external output/ folder, since all output paths are hard-coded to write into such folder
-Suggestion 2: create a cfg/ folder, since all configuration file paths are hard-coded to read/write into such folder
+Suggestion 2: create an external cfg/ folder, since all configuration file paths are hard-coded to read/write into such folder
 
 ####### 1 - FOLDER STRUCTURE
 
@@ -14,12 +14,11 @@ scripts/ -> where the codes are developed
 
 The script/ folder further contains:
 aux/ -> contains auxiliary code
-cfg/ (to be created by the user) -> where all the configuration files are stored by default
 telescope/ -> contains the scripts used to run the alignment and the tracking with Proteus
 DUT/ -> contains the scripts used to read the binary DUT files, fit the waveforms and visualize the results
 sync/ -> contains the scripts used to synchronize the DUT data with the telescope data
 
-The extra external output/ folder must be created by the user
+The extra external output/ and cfg/ folders must be created by the user
 
 ####### 2 - RECONSTRUCTION OF TELESCOPE DATA
 

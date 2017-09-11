@@ -9,7 +9,7 @@ int makeConfigFile(const unsigned int run,
 		   const double T03 = 200.){
 
   char fileName[1000];
-  sprintf(fileName, "../cfg/run_%06d.cfg", run);
+  sprintf(fileName, "../../../cfg/run_%06d.cfg", run);
   ofstream file(fileName);
   if(!file){
     cout << __PRETTY_FUNCTION__ << ": cannot open file " << fileName << endl;

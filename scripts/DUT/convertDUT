@@ -13,7 +13,7 @@ fi
 #fileNameIn=$(printf "/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/DUT_%06d.dat" $RUN)
 fileNameIn=$(printf "../../raw/DUT_%06d.dat" $RUN)
 fileNameOut=$(printf "../../../output/DUT_%06d_000000.root" $RUN)
-fileNameCfg=$(printf "../cfg/run_%06d.cfg" $RUN)
+fileNameCfg=$(printf "../../../cfg/run_%06d.cfg" $RUN)
 
 root -b << EOF
 .L convertDUT.C++
