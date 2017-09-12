@@ -2,6 +2,7 @@ int draw(const unsigned int run){
 
   gStyle -> SetOptStat(0);
   gStyle -> SetPalette(55);
+  gStyle->SetNumberContours(256);
   
   char fileName[1000];
   sprintf(fileName, "../../../output/DUT_%06d_000000.root", run);
