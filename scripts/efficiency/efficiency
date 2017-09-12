@@ -1,0 +1,17 @@
+#!/bin/bash
+
+LIST=$1
+
+if [ "$#" -lt 1 ]; then
+    echo "Usage:"
+    echo "$ ./efficiency <LIST>"
+    exit
+fi
+
+fileNameInFormat="../../../output/sync_%06d_000000.root"
+fileNameCfgFormat="../../../cfg/run_%06d.cfg"
+
+root -b << EOF
+.L efficiency.C++
+efficiency("$LIST", "$fileNameInFormat", "$fileNameCfgFormat")
+EOF
