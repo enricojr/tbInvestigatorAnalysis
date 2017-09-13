@@ -2,12 +2,21 @@
 #include <fstream>
 using namespace std;
 
+#define NSAMPLES 1024
+
 int makeConfigFile(const unsigned int run,
 		   const double T00 = 200.,
 		   const double T01 = 200.,
 		   const double T02 = 200.,
 		   const double T03 = 200.){
 
+  double T0[5];
+  T0[0] = T00;
+  T0[1] = T01;
+  T0[2] = T02;
+  T0[3] = 0.;
+  T0[4] = T03;
+  
   char fileName[1000];
   sprintf(fileName, "../../../cfg/run_%06d.cfg", run);
   ofstream file(fileName);
@@ -16,6 +25,48 @@ int makeConfigFile(const unsigned int run,
     return 1;
   }
 
+  const double linearRangeLeft = 150.;
+  const double linearRangeRight = 150.;
+  pair<double, double> linearRange[5];
+
+  const double pulseRangeLeft = 150.;
+  const double pulseRangeRight = 150.;
+  pair<double, double> pulseRange[5];
+  
+  const double pulseT0Left = 150.;
+  const double pulseT0Right = 50.;
+  pair<double, double> pulseT0[5];
+  
+  const double pulseT0SelectionLeft = 125.;
+  const double pulseT0SelectionRight = 50.;
+  pair<double, double> pulseT0Selection[5];
+  
+  for(unsigned int i=0; i<5; i++){
+    if(i==3) continue;
+    linearRange[i].first = T0[i]-linearRangeLeft;
+    linearRange[i].second = T0[i]+linearRangeRight;
+    pulseRange[i].first = T0[i]-pulseRangeLeft;
+    pulseRange[i].second = T0[i]+pulseRangeRight;
+    pulseT0[i].first = T0[i]-pulseT0Left;
+    pulseT0[i].second = T0[i]+pulseT0Right;
+    pulseT0Selection[i].first = T0[i]-pulseT0SelectionLeft;
+    pulseT0Selection[i].second = T0[i]+pulseT0SelectionRight;
+  }
+
+  const double clearanceLeft = 20.;
+  const double clearanceRight = 20.;
+  for(unsigned int i=0; i<5; i++){
+    if(i==3) continue;
+    if(linearRange[i].first < clearanceLeft) linearRange[i].first = clearanceLeft;
+    if(linearRange[i].second > NSAMPLES-clearanceRight) linearRange[i].second = NSAMPLES-clearanceRight;
+    if(pulseRange[i].first < clearanceLeft) pulseRange[i].first = clearanceLeft;
+    if(pulseRange[i].second > NSAMPLES-clearanceRight) pulseRange[i].second = NSAMPLES-clearanceRight;
+    if(pulseT0[i].first < clearanceLeft) pulseT0[i].first = clearanceLeft;
+    if(pulseT0[i].second > NSAMPLES-clearanceRight) pulseT0[i].second = NSAMPLES-clearanceRight;
+    if(pulseT0Selection[i].first < clearanceLeft) pulseT0Selection[i].first = clearanceLeft;
+    if(pulseT0Selection[i].second > NSAMPLES-clearanceRight) pulseT0Selection[i].second = NSAMPLES-clearanceRight;
+  }
+  
   file << "# number of DRSs" << endl;
   file << "2" << endl;
   file << "# DRS 0, # channels" << endl;
@@ -27,21 +78,17 @@ int makeConfigFile(const unsigned int run,
   file << "# reset channel" << endl;
   file << "3" << endl;
   file << "# linear fit, parameters initialization (min, max): range" << endl;
-  file << T00-150. << " " << T00+150. << endl;
-  file << T01-150. << " " << T01+150. << endl;
-  file << T02-150. << " " << T02+150. << endl;
-  file << "0. 0." << endl;
-  file << T03-150. << " " << T03+150. << endl;
+  for(unsigned int i=0; i<5; i++){
+    file << linearRange[i].first << " " << linearRange[i].second << endl;
+  }
   file << "# linear fit, parameters initialization (value, min, max): offset" << endl;
   file << "32768. 0. 65536." << endl;
   file << "# linear fit, parameters initialization (value, min, max): slope" << endl;
   file << "0. -100. 100." << endl;
   file << "# pulse fit, parameters initialization (min, max): range" << endl;
-  file << T00-150. << " " << T00+150. << endl;
-  file << T01-150. << " " << T01+150. << endl;
-  file << T02-150. << " " << T02+150. << endl;
-  file << "0. 0." << endl;
-  file << T03-150. << " " << T03+150. << endl;
+  for(unsigned int i=0; i<5; i++){
+    file << pulseRange[i].first << " " << pulseRange[i].second << endl;
+  }
   file << "# pulse fit, parameters initialization (value, min, max): offset (automatically initialized to waveform beginning)" << endl;
   file << "32768. 0. 65536." << endl;
   file << "# pulse fit, parameters initialization (value, min, max): slope" << endl;
@@ -49,11 +96,9 @@ int makeConfigFile(const unsigned int run,
   file << "# pulse fit, parameters initialization (value, min, max): amplitude (automatically initialized to peak-to-peak)" << endl;
   file << "1000. 0. 65536." << endl;
   file << "# pulse fit, parameters initialization (value, min, max): T0" << endl;
-  file << T00 << " " << T00-150. << " " << T00+50. << endl;
-  file << T01 << " " << T01-150. << " " << T01+50. << endl;
-  file << T02 << " " << T02-150. << " " << T02+50. << endl;
-  file << "0. 0. 0." << endl;
-  file << T03 << " " << T03-150. << " " << T03+50. << endl;
+  for(unsigned int i=0; i<5; i++){
+    file << T0[i] << " " << pulseT0[i].first << " " << pulseT0[i].second << endl;
+  }
   file << "# pulse fit, parameters initialization (value, min, max): rise time" << endl;
   file << "6. 1. 50." << endl;
   file << "# pulse fit, parameters initialization (value, min, max): decay" << endl;
@@ -63,11 +108,9 @@ int makeConfigFile(const unsigned int run,
   file << "# threshold for the reduced chi2 of the pulse fit" << endl;
   file << "10." << endl;
   file << "# limits for pulse fit: T0" << endl;
-  file << T00-125. << " " << T00+50. << endl;
-  file << T01-125. << " " << T01+50. << endl;
-  file << T02-125. << " " << T02+50. << endl;
-  file << "0. 0." << endl;
-  file << T03-125. << " " << T03+50. << endl;
+  for(unsigned int i=0; i<5; i++){
+    file << pulseT0Selection[i].first << " " << pulseT0Selection[i].second << endl;
+  }
   file << "# limits for pulse fit: rise time" << endl;
   file << "1. 20." << endl;
   file << "# time difference threshold for spill identification" << endl;
