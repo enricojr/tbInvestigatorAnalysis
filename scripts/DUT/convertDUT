@@ -19,3 +19,5 @@ root -b << EOF
 .L convertDUT.C++
 convertDUT("$fileNameIn", "$fileNameOut", "$fileNameCfg", $nEvents, $startEvent)
 EOF
+
+rm -rf convertDUT_C.*

@@ -18,3 +18,5 @@ root -b << EOF
 .L synchronize.C++
 synchronize("$fileNameInTelescope", "$fileNameInDUT", "$fileNameInCfg", "$fileNameOut", $NEVENTS)
 EOF
+
+rm -rf synchronize_C.*

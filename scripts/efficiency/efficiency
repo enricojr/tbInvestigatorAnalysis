@@ -15,3 +15,5 @@ root -b << EOF
 .L efficiency.C++
 efficiency("$LIST", "$fileNameInFormat", "$fileNameCfgFormat")
 EOF
+
+rm -rf efficiency_C.*
