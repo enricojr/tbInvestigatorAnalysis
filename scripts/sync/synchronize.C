@@ -290,7 +290,7 @@ int synchronize(const char *fileNameInTelescope,
     
     }
     else{
-      cout << __PRETTY_FUNCTION__ << ": ERROR!!! - mismatching number of events at spill " << iSpill << ": " << spillDUT[iSpill] -> _event.size() << " (DUT) vs " << spillTelescope[iSpill] -> _event.size() << " (telescope)" << endl;
+      cout << __PRETTY_FUNCTION__ << ": WARNING!!! - mismatching number of events at spill " << iSpill << ": " << spillDUT[iSpill] -> _event.size() << " (DUT) vs " << spillTelescope[iSpill] -> _event.size() << " (telescope)" << endl;
       drawSpill(spillDUT,
 		spillTelescope,
 		iSpill-2);
@@ -303,7 +303,7 @@ int synchronize(const char *fileNameInTelescope,
       drawSpill(spillDUT,
 		spillTelescope,
 		iSpill+1);
-      break;
+      continue;
     }
     
   }
