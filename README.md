@@ -10,10 +10,12 @@ Paths to input and output folders must be setup before starting. The user must c
 The script setup_env sets the paths to the input and output folders. It can be run in two ways:
 
 $ source setup_env
-  This will set the input paths from eos
+
+This will set the input paths from eos
 
 $ source setup_env 0
-  This will set the input paths from the local output/ and cfg/ (plus an additional raw/ folder where the raw DUT binary data are stored). This option is convenient if no access to eos is available, e.g. for running on a personal laptop. Notice however that the telescope reconstructed data must be available already in the output/ folder.
+
+This will set the input paths from the local output/ and cfg/ (plus an additional raw/ folder where the raw DUT binary data are stored). This option is convenient if no access to eos is available, e.g. for running on a personal laptop. Notice however that the telescope reconstructed data must be available already in the output/ folder.
 
 ####### 1 - FOLDER STRUCTURE
 
