@@ -1,11 +1,13 @@
-int draw(const unsigned int run){
+int draw(const unsigned int run,
+	 const bool eos = true){
 
   gStyle -> SetOptStat(0);
   gStyle -> SetPalette(55);
   gStyle->SetNumberContours(256);
   
   char fileName[1000];
-  sprintf(fileName, "../../../output/DUT_%06d_000000.root", run);
+  if(eos) sprintf(fileName, "/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/converted/DUT_%06d_000000.root", run);
+  else sprintf(fileName, "../../../output/DUT_%06d_000000.root", run);
   cout << ": fileName = " << fileName << endl;
 
   TFile *file = TFile::Open(fileName);
