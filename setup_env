@@ -1,12 +1,24 @@
-export TBPATHINCFG=../../../cfg
+EOS=$1
+echo $EOS
+
+if [ $EOS -eq 0 ]; then
+   echo "Setting local paths"
+   export TBPATHINCFG=../../../cfg
+   export TBPATHOUTCFG=../../../cfg
+   export TBPATHINOUT=../../../output
+   export TBPATHOUTOUT=../../../output
+   export TBPATHININ=../../../raw   
+else
+   echo "Setting eos paths"
+   export TBPATHINCFG=/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/converted
+   export TBPATHOUTCFG=../../../cfg
+   export TBPATHINOUT=/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/converted
+   export TBPATHOUTOUT=../../../output
+   export TBPATHININ=/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017
+fi
+
 echo "TBPATHINCFG="$TBPATHINCFG
-export TBPATHOUTCFG=../../../cfg
 echo "TBPATHOUTCFG="$TBPATHOUTCFG
-
-export TBPATHINOUT=../../../output
 echo "TBPATHINOUT="$TBPATHINOUT
-export TBPATHOUTOUT=../../../output
 echo "TBPATHOUTOUT="$TBPATHOUTOUT
-
-export TBPATHININ=../../../raw
 echo "TBPATHININ="$TBPATHININ
