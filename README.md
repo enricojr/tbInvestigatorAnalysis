@@ -1,10 +1,19 @@
 This code is meant to analyze test beam data from the TJ Investigator chip, acquired using a reference telescope.
 
-####### 0 - !!!!!!! WARNING !!!!!!!
-A few paths are hard-coded here and there. If things go wrong, the very first thing to check (and eventually modify) are the hard-coded paths.
-In particular, make sure that the raw data paths point to the correct eos/ location
-Suggestion 1: create an external output/ folder, since all output paths are hard-coded to write into such folder
-Suggestion 2: create an external cfg/ folder, since all configuration file paths are hard-coded to read/write into such folder
+####### 0 - ENVIRONMENT
+
+Paths to input and output folders must be setup before starting. The user must create the following EXTERNAL folders:
+- output/ 
+- cfg/
+
+------- SETTING PATHS
+The script setup_env sets the paths to the input and output folders. It can be run in two ways:
+
+$ source setup_env
+  This will set the input paths from eos
+
+$ source setup_env 0
+  This will set the input paths from the local output/ and cfg/ (plus an additional raw/ folder where the raw DUT binary data are stored). This option is convenient if no access to eos is available, e.g. for running on a personal laptop. Notice however that the telescope reconstructed data must be available already in the output/ folder.
 
 ####### 1 - FOLDER STRUCTURE
 
@@ -17,8 +26,9 @@ aux/ -> contains auxiliary code
 telescope/ -> contains the scripts used to run the alignment and the tracking with Proteus
 DUT/ -> contains the scripts used to read the binary DUT files, fit the waveforms and visualize the results
 sync/ -> contains the scripts used to synchronize the DUT data with the telescope data
+efficiency/ -> contains the scripts used to calculated efficiency, charge distributions, cluster sizes, and so on
 
-The extra external output/ and cfg/ folders must be created by the user
+The extra external output/ and cfg/ (plus, eventually, raw/) folders must be created by the user
 
 ####### 2 - RECONSTRUCTION OF TELESCOPE DATA
 
@@ -50,15 +60,15 @@ The convertDUT script is a useful tool to run the reconstruction from command li
 
 ------- WRITING THE CONFIGURATION FILE
 The DUT analysis code (and later the synchronization code) takes input from a configuration file.
-The configuration files are stored in the scripts/cfg/ folder.
-The configuration file can be written by hand (strongly not suggested) or it can be created using the script makeConfigFile.C as follows:
+The configuration files are stored in the external cfg/ folder.
+The configuration file can be written by hand (strongly not suggested) or it can be created using the script makeConfigFile as follows:
 
-root -l
-[0] .L makeConfigFile.C++
-[1] makeConfigFile(<runNumber>)
+./makeConfigFile <runNumber>
 
 This creates a dummy configuration file called run_XXXXXX.cfg, where XXXXXX = <runNumber>
-In general, the numbers set in the configuration file must be edited to match the run-specific values. For this, one may use the additional parameters of the makeConfigFile() function (see later in SUGGESTED PROCEDURE).
+In general, the numbers set in the configuration file must be edited to match the run-specific values. In particular, the four T0 initialization values must be set. For this, one may use the additional parameters of the makeConfigFile() function (see later in SUGGESTED PROCEDURE). In such a case, run
+
+./makeConfigFile <runNumber> <T00> <T01> <T02> <T03>
 
 ------- RUNNING THE RECONSTRUCTION
 To reconstruct the DUT data, run
@@ -74,7 +84,9 @@ The results of the DUT data reconstruction are stored in a root file. Such file 
 
 root -l
 [0] .L draw.C
-[1] draw(<runNumber>)
+[1] draw(<runNumber>, <eos>)
+
+The second argument is optional. If true, it reads the root file from eos, else it reads it from the local output/ folder. The default value is true.
 
 ------- SUGGESTED PROCEDURE
 The following is the suggested procedure to run the full DUT data reconstruction:
@@ -83,9 +95,7 @@ The following is the suggested procedure to run the full DUT data reconstruction
 https://docs.google.com/spreadsheets/d/1aqYTKp-7KoSPRIHlO4xX8QjAHAG4_QRSNxxN7YON6nc/edit#gid=0
 
 2) Create a virgin config file, from the folder aux/ (for example, for run 207)
-root -l
-[0] .L makeConfigFile.C++
-[1] makeConfigFile(207)
+./makeConfigFile 207
 
 3) Run a preliminary reconstruction, from the folder DUT/ (for example, for run 207, suggested 10000 events, be careful, some runs have fewer events)
 ./convertDUT 207 10000 0
@@ -93,14 +103,12 @@ root -l
 4) Take a look at the output histograms, from the folder DUT/ (e.g. run 207)
 root -l
 [0] .L draw.C
-[1] draw(207)
+[1] draw(207, false)
 
 5) Note down the T0 positions of each of the 4 channels
 5A) if 200, 200, 200, 200, no need to regenerate the config file, since these are the default values
 5B) else, regenerate config file, from the folder aux/ (for example, for run 207, for which the T0 positions are 650, 650, 650, 800)
-root -l
-[0] .L makeConfigFile.C++
-[1] makeConfigFile(207, 650, 650, 650, 800)
+./makeConfigFile 207 650 650 650 800
 
 6) Re-run the reconstruction on 10000 events (same as 3)) and take a look again at the output histograms (same as 4))
 6A) if left plots are flat and right plots contain the signals, run the full reconstruction:
@@ -119,4 +127,4 @@ As soon as one spill is found where the number of events in the DUT doesn't matc
 
 ####### 5 - EFFICIENCY AND OTHER FINAL RESULTS
 
-To be implemented.
+Work in progress.
