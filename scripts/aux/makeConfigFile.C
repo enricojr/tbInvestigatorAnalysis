@@ -5,6 +5,7 @@ using namespace std;
 #define NSAMPLES 1024
 
 int makeConfigFile(const unsigned int run,
+		   const char *path,
 		   const double T00 = 200.,
 		   const double T01 = 200.,
 		   const double T02 = 200.,
@@ -18,7 +19,7 @@ int makeConfigFile(const unsigned int run,
   T0[4] = T03;
   
   char fileName[1000];
-  sprintf(fileName, "../../../cfg/run_%06d.cfg", run);
+  sprintf(fileName, "%s/run_%06d.cfg", path, run);
   ofstream file(fileName);
   if(!file){
     cout << __PRETTY_FUNCTION__ << ": cannot open file " << fileName << endl;

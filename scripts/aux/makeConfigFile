@@ -1,0 +1,26 @@
+#!/bin/bash
+
+RUN=$1
+T00=$2
+T01=$3
+T02=$4
+T03=$5
+
+if [ "$#" -eq 1 ]; then
+    root -b << EOF
+.L makeConfigFile.C++
+makeConfigFile($RUN, "$TBPATHOUTCFG")
+EOF
+elif [ "$#" -eq 5 ]; then
+    root -b << EOF
+.L makeConfigFile.C++
+makeConfigFile($RUN, "$TBPATHOUTCFG", $T00, $T01, $T02, $T03)
+EOF
+else
+    echo "Must provide none or 4 T0 values"
+    echo "Usage:"
+    echo "$ ./sync <RUN> (<T00> <T01> <T02> <T03>)"
+    exit
+fi
+
+rm -rf makeConfigFile_C.*

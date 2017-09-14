@@ -1,0 +1,12 @@
+export TBPATHINCFG=../../../cfg
+echo "TBPATHINCFG="$TBPATHINCFG
+export TBPATHOUTCFG=../../../cfg
+echo "TBPATHOUTCFG="$TBPATHOUTCFG
+
+export TBPATHINOUT=../../../output
+echo "TBPATHINOUT="$TBPATHINOUT
+export TBPATHOUTOUT=../../../output
+echo "TBPATHOUTOUT="$TBPATHOUTOUT
+
+export TBPATHININ=../../../raw
+echo "TBPATHININ="$TBPATHININ

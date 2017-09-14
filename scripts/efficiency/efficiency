@@ -8,8 +8,8 @@ if [ "$#" -lt 1 ]; then
     exit
 fi
 
-fileNameInFormat="../../../output/sync_%06d_000000.root"
-fileNameCfgFormat="../../../cfg/run_%06d.cfg"
+fileNameInFormat="$TBPATHINOUT/sync_%06d_000000.root"
+fileNameCfgFormat="$TBPATHINCFG/run_%06d.cfg"
 
 root -b << EOF
 .L efficiency.C++
