@@ -265,6 +265,7 @@ int synchronize(const char *fileNameInTelescope,
   cout << __PRETTY_FUNCTION__ << ": nSpills = " << nSpills << endl;
 
   // matching event by event, if event size is the same
+  unsigned int countSkippedSpills = 0;
   for(unsigned int iSpill=0; iSpill<nSpills; iSpill++){
     loadBar(iSpill, nSpills);
     if(spillTelescope[iSpill] -> _event.size() == spillDUT[iSpill] -> _event.size()){
@@ -291,6 +292,7 @@ int synchronize(const char *fileNameInTelescope,
     }
     else{
       cout << __PRETTY_FUNCTION__ << ": WARNING!!! - mismatching number of events at spill " << iSpill << ": " << spillDUT[iSpill] -> _event.size() << " (DUT) vs " << spillTelescope[iSpill] -> _event.size() << " (telescope)" << endl;
+      countSkippedSpills ++;
       // drawSpill(spillDUT,
       // 		spillTelescope,
       // 		iSpill-2);
@@ -311,6 +313,10 @@ int synchronize(const char *fileNameInTelescope,
     
   }
 
+  cout << __PRETTY_FUNCTION__ << ": nSpills = " << nSpills << endl;
+  cout << __PRETTY_FUNCTION__ << ": countSkippedSpills = " << countSkippedSpills << endl;
+  cout << __PRETTY_FUNCTION__ << ": fraction = " << 100.*countSkippedSpills/nSpills << "%" << endl;
+  
   delete tTracks;
   delete tEvent;
   fileInTelescope -> Close();
