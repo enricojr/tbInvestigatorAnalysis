@@ -291,21 +291,21 @@ int synchronize(const char *fileNameInTelescope,
     }
     else{
       cout << __PRETTY_FUNCTION__ << ": WARNING!!! - mismatching number of events at spill " << iSpill << ": " << spillDUT[iSpill] -> _event.size() << " (DUT) vs " << spillTelescope[iSpill] -> _event.size() << " (telescope)" << endl;
-      drawSpill(spillDUT,
-		spillTelescope,
-		iSpill-2);
-      drawSpill(spillDUT,
-		spillTelescope,
-		iSpill-1);
-      drawSpill(spillDUT,
-		spillTelescope,
-		iSpill);
-      drawSpill(spillDUT,
-		spillTelescope,
-		iSpill+1);
-      drawSpill(spillDUT,
-		spillTelescope,
-		iSpill+2);
+      // drawSpill(spillDUT,
+      // 		spillTelescope,
+      // 		iSpill-2);
+      // drawSpill(spillDUT,
+      // 		spillTelescope,
+      // 		iSpill-1);
+      // drawSpill(spillDUT,
+      // 		spillTelescope,
+      // 		iSpill);
+      // drawSpill(spillDUT,
+      // 		spillTelescope,
+      // 		iSpill+1);
+      // drawSpill(spillDUT,
+      // 		spillTelescope,
+      // 		iSpill+2);
       continue;
     }
     
