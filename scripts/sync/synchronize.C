@@ -312,10 +312,11 @@ int synchronize(const char *fileNameInTelescope,
     }
     
   }
-
+  
   cout << __PRETTY_FUNCTION__ << ": nSpills = " << nSpills << endl;
   cout << __PRETTY_FUNCTION__ << ": countSkippedSpills = " << countSkippedSpills << endl;
-  cout << __PRETTY_FUNCTION__ << ": fraction = " << 100.*countSkippedSpills/nSpills << "%" << endl;
+  cout << __PRETTY_FUNCTION__ << ": fraction skipped = " << 100.*countSkippedSpills/nSpills << "%" << endl;
+  cout << __PRETTY_FUNCTION__ << ": fraction synced = " << 100.-100.*countSkippedSpills/nSpills << "%" << endl;
   
   delete tTracks;
   delete tEvent;
