@@ -303,6 +303,9 @@ int synchronize(const char *fileNameInTelescope,
       drawSpill(spillDUT,
 		spillTelescope,
 		iSpill+1);
+      drawSpill(spillDUT,
+		spillTelescope,
+		iSpill+2);
       continue;
     }
     

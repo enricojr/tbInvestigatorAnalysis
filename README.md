@@ -85,7 +85,7 @@ When <eventStart> is different from 0, the reconstruction will start from the sp
 The results of the DUT data reconstruction are stored in a root file. Such file contains a tree with all the fit results, plus a few plots that are useful for checking. One can either open the file by hand, or run the following script:
 
 root -l
-[0] .L draw.C
+[0] .L draw.C++
 [1] draw(<runNumber>, <eos>)
 
 The second argument is optional. If true, it reads the root file from eos, else it reads it from the local output/ folder. The default value is true.
