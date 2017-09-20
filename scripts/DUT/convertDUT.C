@@ -113,10 +113,12 @@ int convertDUT(const char *fileNameIn,
       char name[1000];
       char title[1000];
       sprintf(name, "h2LinearExcludedWaveforms_DRS_%d_CH_%d", iDRS, iCH);
-      sprintf(title, "linear fit excluded waveforms DRS %d CH %d", iDRS, iCH);
+      if(nEvents == 0) sprintf(title, "linear fit excluded waveforms DRS %d CH %d, full statistics", iDRS, iCH);
+      else sprintf(title, "linear fit excluded waveforms DRS %d CH %d, %d events", iDRS, iCH, nEvents);
       h2LinearExcludedWaveforms[iDRS][iCH] = new TH2F(name, title, NDRSSAMPLES, 0, NDRSSAMPLES, PLOTWAVEFORMNBINSAMPLITUDE, PLOTWAVEFORMMINAMPLITUDE, PLOTWAVEFORMMAXAMPLITUDE); 
       sprintf(name, "h2LinearSelectedWaveforms_DRS_%d_CH_%d", iDRS, iCH);
-      sprintf(title, "linear fit selected waveforms DRS %d CH %d", iDRS, iCH);
+      if(nEvents == 0) sprintf(title, "linear fit selected waveforms DRS %d CH %d, full statistics", iDRS, iCH);
+      else sprintf(title, "linear fit selected waveforms DRS %d CH %d, %d events", iDRS, iCH, nEvents);
       h2LinearSelectedWaveforms[iDRS][iCH] = new TH2F(name, title, NDRSSAMPLES, 0, NDRSSAMPLES, PLOTWAVEFORMNBINSAMPLITUDE, PLOTWAVEFORMMINAMPLITUDE, PLOTWAVEFORMMAXAMPLITUDE); 
     }
   }
@@ -131,10 +133,12 @@ int convertDUT(const char *fileNameIn,
       char name[1000];
       char title[1000];
       sprintf(name, "h2PulseExcludedWaveforms_DRS_%d_CH_%d", iDRS, iCH);
-      sprintf(title, "pulse fit excluded waveforms DRS %d CH %d", iDRS, iCH);
+      if(nEvents == 0) sprintf(title, "pulse fit excluded waveforms DRS %d CH %d, full statistics", iDRS, iCH);
+      else sprintf(title, "pulse fit excluded waveforms DRS %d CH %d, %d events", iDRS, iCH, nEvents);
       h2PulseExcludedWaveforms[iDRS][iCH] = new TH2F(name, title, NDRSSAMPLES, 0, NDRSSAMPLES, PLOTWAVEFORMNBINSAMPLITUDE, PLOTWAVEFORMMINAMPLITUDE, PLOTWAVEFORMMAXAMPLITUDE); 
       sprintf(name, "h2PulseSelectedWaveforms_DRS_%d_CH_%d", iDRS, iCH);
-      sprintf(title, "pulse fit selected waveforms DRS %d CH %d", iDRS, iCH);
+      if(nEvents == 0) sprintf(title, "pulse fit selected waveforms DRS %d CH %d, full statistics", iDRS, iCH);
+      else sprintf(title, "pulse fit selected waveforms DRS %d CH %d, %d events", iDRS, iCH, nEvents);
       h2PulseSelectedWaveforms[iDRS][iCH] = new TH2F(name, title, NDRSSAMPLES, 0, NDRSSAMPLES, PLOTWAVEFORMNBINSAMPLITUDE, PLOTWAVEFORMMINAMPLITUDE, PLOTWAVEFORMMAXAMPLITUDE); 
     }
   }
