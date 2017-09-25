@@ -53,6 +53,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][0].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][0].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][0].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][0].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(2);
   cc -> cd(2) -> SetGridx();
@@ -64,6 +74,16 @@ int draw(const unsigned int run,
   line = new TLine(cfg -> _pulseT0[0][0].val, gPad->GetUymin(),
 		   cfg -> _pulseT0[0][0].val, gPad->GetUymax());
   line -> SetLineColor(2);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][0].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][0].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][0].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][0].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
   line -> SetLineWidth(2);
   line -> Draw();
   
@@ -79,6 +99,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][1].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][1].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][1].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][1].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(6);
   cc -> cd(6) -> SetGridx();
@@ -92,6 +122,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();  
+  line = new TLine(cfg -> _pulseT0[0][1].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][1].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][1].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][1].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(9);
   cc -> cd(9) -> SetGridx();
@@ -105,6 +145,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();  
+  line = new TLine(cfg -> _pulseT0[0][2].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][2].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][2].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][2].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(10);
   cc -> cd(10) -> SetGridx();
@@ -116,6 +166,16 @@ int draw(const unsigned int run,
   line = new TLine(cfg -> _pulseT0[0][2].val, gPad->GetUymin(),
 		   cfg -> _pulseT0[0][2].val, gPad->GetUymax());
   line -> SetLineColor(2);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][2].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][2].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][2].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][2].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
   line -> SetLineWidth(2);
   line -> Draw();
   
@@ -131,6 +191,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();
+  line = new TLine(cfg -> _pulseT0[1][0].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[1][0].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[1][0].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[1][0].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(14);
   cc -> cd(14) -> SetGridx();
@@ -142,6 +212,16 @@ int draw(const unsigned int run,
   line = new TLine(cfg -> _pulseT0[1][0].val, gPad->GetUymin(),
 		   cfg -> _pulseT0[1][0].val, gPad->GetUymax());
   line -> SetLineColor(2);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[1][0].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[1][0].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[1][0].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[1][0].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
   line -> SetLineWidth(2);
   line -> Draw();
   
@@ -157,6 +237,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();  
+  line = new TLine(cfg -> _pulseT0[0][0].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][0].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][0].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][0].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(4);
   cc -> cd(4) -> SetGridx();
@@ -170,6 +260,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();  
+  line = new TLine(cfg -> _pulseT0[0][0].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][0].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][0].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][0].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(7);
   cc -> cd(7) -> SetGridx();
@@ -183,6 +283,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();  
+  line = new TLine(cfg -> _pulseT0[0][1].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][1].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][1].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][1].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(8);
   cc -> cd(8) -> SetGridx();
@@ -194,6 +304,16 @@ int draw(const unsigned int run,
   line = new TLine(cfg -> _pulseT0[0][1].val, gPad->GetUymin(),
 		   cfg -> _pulseT0[0][1].val, gPad->GetUymax());
   line -> SetLineColor(2);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][1].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][1].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][1].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][1].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
   line -> SetLineWidth(2);
   line -> Draw();
   
@@ -209,6 +329,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][2].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][2].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][2].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][2].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(12);
   cc -> cd(12) -> SetGridx();
@@ -220,6 +350,16 @@ int draw(const unsigned int run,
   line = new TLine(cfg -> _pulseT0[0][2].val, gPad->GetUymin(),
 		   cfg -> _pulseT0[0][2].val, gPad->GetUymax());
   line -> SetLineColor(2);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][2].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][2].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[0][2].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[0][2].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
   line -> SetLineWidth(2);
   line -> Draw();
   
@@ -235,6 +375,16 @@ int draw(const unsigned int run,
   line -> SetLineColor(2);
   line -> SetLineWidth(2);
   line -> Draw();
+  line = new TLine(cfg -> _pulseT0[1][0].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[1][0].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[1][0].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[1][0].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
   
   cc -> cd(16);
   cc -> cd(16) -> SetGridx();
@@ -246,6 +396,16 @@ int draw(const unsigned int run,
   line = new TLine(cfg -> _pulseT0[1][0].val, gPad->GetUymin(),
 		   cfg -> _pulseT0[1][0].val, gPad->GetUymax());
   line -> SetLineColor(2);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[1][0].range.min, gPad->GetUymin(),
+		   cfg -> _pulseT0[1][0].range.min, gPad->GetUymax());
+  line -> SetLineColor(3);
+  line -> SetLineWidth(2);
+  line -> Draw();
+  line = new TLine(cfg -> _pulseT0[1][0].range.max, gPad->GetUymin(),
+		   cfg -> _pulseT0[1][0].range.max, gPad->GetUymax());
+  line -> SetLineColor(3);
   line -> SetLineWidth(2);
   line -> Draw();
 
