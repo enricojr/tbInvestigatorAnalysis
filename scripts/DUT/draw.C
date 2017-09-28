@@ -3,6 +3,7 @@
 using namespace std;
 
 #include <TFile.h>
+#include <TTree.h>
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TH2.h>
@@ -37,6 +38,10 @@ int draw(const unsigned int run,
     return 1;
   }
 
+  TTree *tree = (TTree *) file -> Get("DUTTree");
+  const unsigned int nEntries = tree -> GetEntries() / 5;
+  cout << __PRETTY_FUNCTION__ << ": nEntries = " << nEntries << endl;
+  
   TLine *line = NULL;
   TCanvas *cc = new TCanvas("cc", "cc", 0, 0, 2000, 1000);
   cc -> Divide(4,4);
