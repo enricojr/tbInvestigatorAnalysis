@@ -300,33 +300,18 @@ void fitWaveformClass::fitPulse(configClass *cfg,
   _pulseRiseTime = fPulse -> GetParameter(4);
   _pulseDecay = fPulse -> GetParameter(5);
   _pulseRedChi2 = fPulse -> GetChisquare() / fPulse -> GetNDF();
-  // computing physical parameters
-  // TF1 *fRise = new TF1("fRise", "[0]*(1-exp(-(x-[1])/[2]))*(1.+[3]*(x-[1]))", _pulseT0, cfg -> _pulse[iDRS][iCH].max);
-  // fRise -> SetParameter(0, _pulseAmplitude);
-  // fRise -> SetParameter(1, _pulseT0);
-  // fRise -> SetParameter(2, _pulseRiseTime);
-  // fRise -> SetParameter(3, _pulseDecay);
-  // _pulseCharge = fRise -> GetMaximum();
-  // cleaning memory
-  //  if(_pulseAmplitude > 100. && _pulseT0 < 100. && _pulseRiseTime < 20.){
   if(false){
     gStyle -> SetOptStat(0);
     gStyle -> SetOptFit(0);
     TCanvas *cc = new TCanvas("cc", "cc", 0, 0, 1000, 1000);
     _h1Waveform -> Draw();
-    TF1 *fDraw = new TF1("fDraw", "fRise+[0]", _pulseT0, cfg -> _pulse[iDRS][iCH].max);
-    fDraw -> SetParameter(0, fPulse -> Eval(_pulseT0));
-    fDraw -> SetLineColor(3);
-    fDraw -> Draw("same");
     char name[1000];
     sprintf(name, "tmp/%06d_%d_%d.png", iEvent, iDRS, iCH);
     cc -> SaveAs(name);
     sprintf(name, "tmp/%06d_%d_%d.root", iEvent, iDRS, iCH);
     cc -> SaveAs(name);
-    delete fDraw;
     delete cc;
   }
-  //  delete fRise;
   delete fPulse;
   return ;
 }

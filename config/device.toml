@@ -43,3 +43,6 @@ type = "fei4-si"
 
 [[sensors]]
 type = "fei4-si"
+
+[[sensors]]
+type = "dummy"
