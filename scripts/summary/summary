@@ -2,17 +2,45 @@
 
 RUN=$1
 
-if [ "$#" -lt 3 ]; then
+if [ "$#" -lt 1 ]; then
     echo "Usage:"
     echo "$ ./summary <RUN>"
     exit
 fi
 
-fileNameDUTConversion=$(printf "../../../output/DUT_%06d.dat" $RUN)
+OUTPUTFOLDER=$(printf "/afs/cern.ch/user/s/schioppa/testBeamAnalysis/output/summary/RUN%06d" $RUN)
+PLOTSFOLDER="$OUTPUTFOLDER/plots"
+
+if [ ! -d "$OUTPUTFOLDER" ]; then
+    echo "creating new folder $OUTPUTFOLDER"
+    mkdir $OUTPUTFOLDER
+    mkdir $PLOTSFOLDER
+else
+    echo "already existing folder $OUTPUTFOLDER"
+fi
+
+fileNameCfg=$(printf "/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/converted/run_%06d.cfg" $RUN)
+fileNameDUTConversion=$(printf "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/DUT_converted/DUT_%06d_000000.root" $RUN)
+fileNameTelescopeConversion=$(printf "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Tel_converted/cosmic_%06d_000000.root" $RUN)
+fileNameTelescopeAlignment=$(printf "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Tel_aligned/cosmic_%06d_000000-align_fine-hists.root" $RUN)
+fileNameTelescopeTracking=$(printf "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Tel_tracked/cosmic_%06d_000000-track-hists.root" $RUN)
+fileNameSynchronization=$(printf "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Synced/sync_%06d_000000.root" $RUN)
+fileNamePositionCorrection=$(printf "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/PositionCorrected/notYet_%06d.ny" $RUN)
+fileNameEfficiency=$(printf "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Efficiency/notYet_%06d.ny" $RUN)
+fileNameLatexLocal=$(printf "RUN%06d.tex" $RUN)
+fileNameLatex="$OUTPUTFOLDER/$fileNameLatexLocal"
 
 root -b << EOF
 .L summary.C++
-summary($RUN, "$fileNameDUTConversion", "$fileNameTelescopeConversion", "$fileNameTelescopeAlignment",  "$fileNameTelescopeTracking",  "$fileNameSynchronization",  "$fileNamePositionCorrection",  "$fileNameEfficiency",  "$fileNameLatex")
+summary($RUN, "$fileNameCfg", "$fileNameDUTConversion", "$fileNameTelescopeConversion", "$fileNameTelescopeAlignment",  "$fileNameTelescopeTracking",  "$fileNameSynchronization",  "$fileNamePositionCorrection",  "$fileNameEfficiency",  "$fileNameLatex", "$PLOTSFOLDER")
 EOF
 
 rm -rf summary_C.*
+
+#CURRENTDIRECTORY=`pwd`
+#echo "$CURRENTDIRECTORY"
+#cd $OUTPUTFOLDER
+#pdflatex $fileNameLatexLocal
+#pdflatex $fileNameLatexLocal
+#pdflatex $fileNameLatexLocal
+#cd $CURRENTDIRECTORY
