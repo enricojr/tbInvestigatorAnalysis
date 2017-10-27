@@ -1,0 +1,18 @@
+#!/bin/bash
+
+RUN=$1
+
+if [ "$#" -lt 3 ]; then
+    echo "Usage:"
+    echo "$ ./summary <RUN>"
+    exit
+fi
+
+fileNameDUTConversion=$(printf "../../../output/DUT_%06d.dat" $RUN)
+
+root -b << EOF
+.L summary.C++
+summary($RUN, "$fileNameDUTConversion", "$fileNameTelescopeConversion", "$fileNameTelescopeAlignment",  "$fileNameTelescopeTracking",  "$fileNameSynchronization",  "$fileNamePositionCorrection",  "$fileNameEfficiency",  "$fileNameLatex")
+EOF
+
+rm -rf summary_C.*
