@@ -1,5 +1,5 @@
-#include "readRawDUT.h"
-#include "fitWaveform.hh"
+#include "../aux/readRawDUT.h"
+#include "../aux/fitWaveform.hh"
 
 #include <TFile.h>
 #include <TTree.h>
