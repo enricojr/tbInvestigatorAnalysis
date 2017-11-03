@@ -1,0 +1,22 @@
+#!/bin/bash
+
+FLAG=$1
+
+if [ "$#" -lt 1 ]; then
+    echo "Usage:"
+    echo "$ ./convertDUT <FLAG>"
+    exit
+fi
+
+fileNameIn="/home/enricojr/cernbox/CMOS/testBeam/2017/calibration/data/$FLAG"
+fileNameOut="/home/enricojr/cernbox/CMOS/testBeam/2017/calibration/data-converted/$FLAG.root"
+#fileNameCfg="/home/enricojr/cernbox/CMOS/testBeam/2017/calibration/config/$FLAG.cfg"
+fileNameCfg="/home/enricojr/cernbox/CMOS/testBeam/2017/calibration/config/dummy.cfg"
+
+root -b << EOF
+.L convertDUT.C++
+convertDUT("$fileNameIn", "$fileNameOut", "$fileNameCfg", 0,0)
+EOF
+
+rm -rf convertDUT_C.*
+rm convertDUT-fluorescence~
