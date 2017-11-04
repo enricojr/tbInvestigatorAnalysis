@@ -1,0 +1,16 @@
+#!/bin/bash
+
+fileNameCfg=$1
+
+if [ "$#" -lt 1 ]; then
+    echo "Usage:"
+    echo "$ ./fit <fileNameCfg>"
+    exit
+fi
+
+root -b << EOF
+.L fit.C++
+fit("$fileNameCfg")
+EOF
+
+rm -rf fit_C.*
