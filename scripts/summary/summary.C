@@ -47,16 +47,16 @@ int summary(const unsigned int runNumber,
   fileLatex << "\\usepackage{verbatim} % to use multiline comments: \\begin{comment}" << endl;
   fileLatex << "\\usepackage{graphicx} % to use \\includegraphics" << endl;
   fileLatex << "\\usepackage{caption} % to use subfigures" << endl;
-  fileLatex << "\\usepackage{subcaption}\\usepackage{amsmath} % to use mathematics" << endl;
+  fileLatex << "%\\usepackage{subcaption}\\usepackage{amsmath} % to use mathematics" << endl;
   fileLatex << "\\usepackage{wrapfig} % to use figures embedded in the text" << endl;
   fileLatex << "\\usepackage{hyperref}" << endl;
   fileLatex << "\\newcommand{\\HRule}{\\rule{\\linewidth}{0.5mm}} % for title page" << endl;
   fileLatex << "\\usepackage{enumerate}" << endl;
-  fileLatex << "\\usepackage{xfrac} % to use sfrac, slanted fractions" << endl;
+  fileLatex << "%\\usepackage{xfrac} % to use sfrac, slanted fractions" << endl;
   fileLatex << "\\usepackage{fancyhdr} % to enable fancy header style" << endl;
   fileLatex << "\\usepackage[margin=0.5in]{geometry}" << endl;
   fileLatex << "\\usepackage{array,multirow} % for tables" << endl;
-  fileLatex << "\\usepackage[version=3]{mhchem} % for chemical formulas" << endl;
+  fileLatex << "%\\usepackage[version=3]{mhchem} % for chemical formulas" << endl;
   fileLatex << "\\usepackage{textcomp} % to use angular brackets in text" << endl;
   fileLatex << "\\usepackage{xcolor}" << endl;
   fileLatex << "\\usepackage{wrapfig}" << endl;
@@ -122,7 +122,7 @@ int summary(const unsigned int runNumber,
   fileLatex << "{\\bf Synchronization fraction:} " << "to be added" << "\\\\" << endl;
   fileLatex << "{\\bf Input file for DUT conversion            :} \\\\ " << escapeSomeChars(fileNameDUTConversion) << "\\\\" << endl;
   fileLatex << "{\\bf Input file for telescope conversion      :} \\\\ " << escapeSomeChars(fileNameTelescopeConversion) << "\\\\" << endl;
-  fileLatex << "{\\bf Input file for telescope alignment       :} \\\\ " << escapeSomeChars(fileNameTelescopeAlignment) << "\\\\" << endl;
+  //  fileLatex << "{\\bf Input file for telescope alignment       :} \\\\ " << escapeSomeChars(fileNameTelescopeAlignment) << "\\\\" << endl;
   fileLatex << "{\\bf Input file for telescope tracking        :} \\\\ " << escapeSomeChars(fileNameTelescopeTracking) << "\\\\" << endl;
   fileLatex << "{\\bf Input file for synchronization           :} \\\\ " << escapeSomeChars(fileNameSynchronization) << "\\\\" << endl;
   fileLatex << "{\\bf Input file for position correction       :} \\\\ " << escapeSomeChars(fileNamePositionCorrection) << "\\\\" << endl;
@@ -149,20 +149,20 @@ int summary(const unsigned int runNumber,
   //////////////////////
   // Telescope alignment
   //////////////////////
-  cout << __PRETTY_FUNCTION__ << ": writing telescope alignment " << endl;
-  if(writeTelescopeAlignment(fileLatex, fileNameTelescopeAlignment, plotPath)){
-    cout << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot write Telescope alignment" << endl;
-    return 0;
-  }
+  //  cout << __PRETTY_FUNCTION__ << ": writing telescope alignment " << endl;
+  //  if(writeTelescopeAlignment(fileLatex, fileNameTelescopeAlignment, plotPath)){
+  //    cout << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot write Telescope alignment" << endl;
+  //    return 0;
+  //  }
 
   /////////////////////
   // Telescope tracking
   /////////////////////
-  cout << __PRETTY_FUNCTION__ << ": writing telescope tracking " << endl;
-  if(writeTelescopeTracking(fileLatex, fileNameTelescopeTracking, plotPath)){
-    cout << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot write Telescope tracking" << endl;
-    return 0;
-  }
+  //  cout << __PRETTY_FUNCTION__ << ": writing telescope tracking " << endl;
+  //  if(writeTelescopeTracking(fileLatex, fileNameTelescopeTracking, plotPath)){
+  //    cout << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot write Telescope tracking" << endl;
+  //    return 0;
+  //  }
 
   //////////////////
   // Synchronization
