@@ -8,7 +8,7 @@
 #define NSAMPLESAVERAGE 20 // number of samples on which to average when computing start/end values
 
 class fitWaveformClass{
- public:
+public:
   fitWaveformClass(const unsigned int nSamples);
   ~fitWaveformClass();
   void reset();
@@ -34,7 +34,7 @@ class fitWaveformClass{
   double getPulseDecay() const;
   double getPulseCharge() const;
   double getPulseRedChi2() const;
- private:
+private:
   TH1F *_h1Waveform;
   unsigned int _nSamples;
   double _min;
@@ -266,9 +266,9 @@ void fitWaveformClass::fitLinear(configClass *cfg,
 }
 
 void fitWaveformClass::fitPulse(configClass *cfg,
-			   const unsigned int iEvent,
-			   const unsigned int iDRS,
-			   const unsigned int iCH){				
+				const unsigned int iEvent,
+				const unsigned int iDRS,
+				const unsigned int iCH){				
   // function
   TF1 *fPulse = new TF1("fPulse", "[0]+[1]*x + 0.5*[2]*(1+TMath::Erf(100*(x-[3])))*(1-exp(-(x-[3])/[4]))*(1.+[5]*(x-[3]))", cfg -> _pulse[iDRS][iCH].min, cfg -> _pulse[iDRS][iCH].max);
   fPulse -> SetParNames("offset", "slope", "amplitude", "T0", "riseTime", "decay");
