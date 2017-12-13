@@ -18,6 +18,12 @@ public:
 	   const unsigned int iEvent,
 	   const unsigned int iDRS,
 	   const unsigned int iCH);
+  void fillNoiseHistogram(const double *waveform, 
+			  configClass *cfg,
+			  const unsigned int iEvent,
+			  const unsigned int iDRS,
+			  const unsigned int iCH,
+			  TH1F ***h1Noise);
   double getPeakToPeak() const;
   double getValStart() const;
   double getDifference() const;
@@ -333,6 +339,28 @@ void fitWaveformClass::fit(const double *waveform,
     fitPulse(cfg, iEvent, iDRS, iCH);
   }
 
+  return ;
+}
+
+void fitWaveformClass::fillNoiseHistogram(const double *waveform, 
+					  configClass *cfg,
+					  const unsigned int iEvent,
+					  const unsigned int iDRS,
+					  const unsigned int iCH,
+					  TH1F ***h1Noise){
+  const bool debugLevel = 1;
+
+  setWaveform(waveform);
+  fitLinear(cfg, iDRS, iCH);
+  if(_linearRedChi2 <= cfg -> _linearRedChi2Threshold){
+    for(unsigned int iSample=0; iSample<_nSamples; iSample++){
+      const double valueMeas = _h1Waveform -> GetBinContent(iSample+1);
+      const double valueFit = _linearOffset + iSample * _linearSlope;
+      const double residual = valueFit-valueMeas;
+      h1Noise[iDRS][iCH] -> Fill(residual);
+    }    
+  }
+  
   return ;
 }
 
