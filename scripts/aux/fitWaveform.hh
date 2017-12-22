@@ -17,13 +17,14 @@ public:
 	   configClass *cfg,
 	   const unsigned int iEvent,
 	   const unsigned int iDRS,
-	   const unsigned int iCH);
+	   const unsigned int iCH,
+	   TH1F ***h1Noise);
   void fillNoiseHistogram(const double *waveform, 
 			  configClass *cfg,
 			  const unsigned int iEvent,
 			  const unsigned int iDRS,
 			  const unsigned int iCH,
-			  TH1F ***h1Noise);
+			  TH1F ***h1Noise);  
   double getPeakToPeak() const;
   double getValStart() const;
   double getDifference() const;
@@ -326,7 +327,8 @@ void fitWaveformClass::fit(const double *waveform,
 			   configClass *cfg,
 			   const unsigned int iEvent,
 			   const unsigned int iDRS,
-			   const unsigned int iCH){
+			   const unsigned int iCH,
+			   TH1F ***h1Noise){
 
   const bool debugLevel = 1;
 
@@ -337,6 +339,9 @@ void fitWaveformClass::fit(const double *waveform,
   fitLinear(cfg, iDRS, iCH);
   if(_linearRedChi2 > cfg -> _linearRedChi2Threshold){
     fitPulse(cfg, iEvent, iDRS, iCH);
+  }
+  else{
+    fillNoiseHistogram(waveform, cfg, iEvent, iDRS, iCH, h1Noise);
   }
 
   return ;
@@ -350,8 +355,6 @@ void fitWaveformClass::fillNoiseHistogram(const double *waveform,
 					  TH1F ***h1Noise){
   const bool debugLevel = 1;
 
-  setWaveform(waveform);
-  fitLinear(cfg, iDRS, iCH);
   if(_linearRedChi2 <= cfg -> _linearRedChi2Threshold){
     for(unsigned int iSample=0; iSample<_nSamples; iSample++){
       const double valueMeas = _h1Waveform -> GetBinContent(iSample+1);

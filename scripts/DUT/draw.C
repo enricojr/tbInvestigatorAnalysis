@@ -11,8 +11,8 @@ using namespace std;
 
 #include "../aux/configClass.hh"
 
-int draw(const unsigned int run,
-	 const bool eos = true){
+int draw(const unsigned int run = 580,
+	 const bool eos = false){
 
   gStyle -> SetOptStat(0);
   gStyle -> SetPalette(55);

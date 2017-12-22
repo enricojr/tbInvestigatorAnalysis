@@ -15,7 +15,6 @@
 #include <sstream>
 
 #define TIMECONVERSION 0.001 // to convert timestamp into seconds
-#define NOISETHRESHOLDSIGMA 3. // how many sigma's away from noise the pulse should be
 
 // parameters for noise plot
 #define PLOTNOISENBINS 2001
@@ -173,11 +172,11 @@ int convertDUT(const char *fileNameIn,
   cout << __PRETTY_FUNCTION__ << ": initializing waveform fitter" << endl;  
   fitWaveformClass *fitWaveform = new fitWaveformClass(NDRSSAMPLES); 
   
-  ///////////////////////////
-  // filling noise histograms
-  ///////////////////////////
-  cout << __PRETTY_FUNCTION__ << ": filling noise histograms" << endl;    
-  cout << __PRETTY_FUNCTION__ << ": reading data from " << fileNameIn << endl;    
+  ///////////////
+  // reading data
+  ///////////////
+  cout << __PRETTY_FUNCTION__ << ": converting DUT data" << endl;    
+  cout << __PRETTY_FUNCTION__ << ": reading data from " << fileNameIn << endl;  
   DRSDataClass *DRSData = new DRSDataClass();
   ifstream DUTFile(fileNameIn, ios::in | ios::binary);
   if(!DUTFile){
@@ -186,207 +185,6 @@ int convertDUT(const char *fileNameIn,
   }
   double t0 = 0.;
   bool endOfFile = false;
-  eventNumber = 0;
-  while(!endOfFile){
-
-    if(DUTFile.eof()) break;
-    
-    endOfFile = goToEventHeader(DUTFile, cfg -> _debugLevel);
-    if(endOfFile) break;
-
-    if(nEvents != 0 && eventNumber >= (Int_t) nEvents) break;
-
-    // startEventNumber
-    if(eventNumber < (Int_t) startEvent){
-      eventNumber++;
-      continue;
-    }
-        
-    if(eventNumber%1000 == 0) cout << __PRETTY_FUNCTION__ << ": Processed " << eventNumber << " events" << endl;
-      
-    // setting t0
-    if(eventNumber == 0){
-      readHeaderInfo(DUTFile, DRSData, cfg -> _debugLevel);      
-      t0 = DRSData -> computeTimestamp();
-      cout << __PRETTY_FUNCTION__ << ": t0 = " << t0 << endl;
-    }
-
-    // timestamp
-    if(eventNumber != 0){
-      readHeaderInfo(DUTFile, DRSData, cfg -> _debugLevel);
-      time = (DRSData -> computeTimestamp() - t0) * TIMECONVERSION;
-    }
-
-    // timeline
-    grTimeline -> SetPoint(grTimeline -> GetN(), eventNumber, time);
-    
-    // loop on DRSs
-    unsigned int channelNumber = 0;
-    for(unsigned int iDRS=0; iDRS<cfg -> _nDRS; iDRS++){
-
-      DRSNumber = iDRS;
-      
-      if(cfg -> _debugLevel >= 3){
-	cout << __PRETTY_FUNCTION__ << ": reading DRS " << iDRS << endl;
-	cout << __PRETTY_FUNCTION__ << ": cfg -> _nCH[" << iDRS << "] = " << cfg -> _nCH[iDRS] << endl;
-      }
-
-      if(iDRS != 0){ // maybe this happens only when the second DRS reads out 1 channel only
-	DRSData -> boardNumber = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	DRSData -> boardNumber = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	DRSData -> boardNumber = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	DRSData -> boardNumber = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	DRSData -> boardNumber = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	DRSData -> boardNumber = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-      }
-
-      DRSData -> boardNumber = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-      DRSData -> boardNumber = readTwoBytes(DUTFile, false, cfg -> _debugLevel);      
-      if(cfg -> _debugLevel >= 3) cout << __PRETTY_FUNCTION__  << ": boardNumber = " << DRSData -> boardNumber << endl;
-      if(cfg -> _nCH[iDRS] != 1){ // maybe this happens only when the DRS reads out 1 channel only
-	DRSData -> triggerCell = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	DRSData -> triggerCell = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	DRSData -> triggerCell = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	DRSData -> triggerCell = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	if(cfg -> _debugLevel >= 3) cout << __PRETTY_FUNCTION__  << ": triggerCell = " << DRSData -> triggerCell << endl;
-      }
-      
-      // loop on channels
-      for(unsigned int iCH=0; iCH<cfg -> _nCH[iDRS]; iCH++){
-
-	CHNumber = iCH;
-	
-	if(cfg -> _debugLevel >= 3) cout << __PRETTY_FUNCTION__ << ": channel " << iCH << endl;
-
-	if(cfg -> _nCH[iDRS] != 1){ // maybe this happens only when the DRS reads out 1 channel only
-	  DRSData -> scaler = readTwoBytes(DUTFile, true, cfg -> _debugLevel);
-	  DRSData -> scaler = readTwoBytes(DUTFile, true, cfg -> _debugLevel);
-	  DRSData -> scaler = readFourBytes(DUTFile, true, cfg -> _debugLevel);
-	}
-	
-	// reading data
-	if(cfg -> _debugLevel >= 3) cout << __PRETTY_FUNCTION__ << ": start waveform " << endl;
-	double waveform[NDRSSAMPLES];
-	for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
-          waveform[iSample] = readTwoBytes(DUTFile, false, cfg -> _debugLevel);
-	}
-
-	// fitting waveform
-	if(iDRS == cfg -> _resetCH.first && iCH == cfg -> _resetCH.second){
-	  fitWaveform -> reset();
-	}
-	else{
-	  fitWaveform -> fillNoiseHistogram(waveform, cfg, eventNumber, iDRS, iCH, h1Noise);
-	  fitWaveform -> reset();	  
-	}
-
-	// writing data, filling plots
-	if(iDRS == cfg -> _resetCH.first && iCH == cfg -> _resetCH.second){
-	  // reset waveforms
-	  for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
-	    h2ResetWaveforms -> Fill(iSample, waveform[iSample]);
-	  }
-	}
-	else{
-	  h1LinearRedChi2 -> Fill(linearRedChi2);
-	  if(linearRedChi2 > cfg -> _linearRedChi2Threshold){ // selection from linear fit
-	    h1LinearRedChi2Selected -> Fill(linearRedChi2);
-	    for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
-	      h2LinearSelectedWaveforms[iDRS][iCH] -> Fill(iSample, waveform[iSample]);
-	    }
-	    if(pulseT0 > cfg -> _pulseT0Range[iDRS][iCH].min && pulseT0 < cfg -> _pulseT0Range[iDRS][iCH].max // selection from pulse fit
-	       &&
-	       pulseRiseTime > cfg -> _pulseRiseTimeRange.min && pulseRiseTime < cfg -> _pulseRiseTimeRange.max
-	       &&
-	       pulseRedChi2 < cfg -> _pulseRedChi2Threshold){
-	      for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
-		h2PulseSelectedWaveforms[iDRS][iCH] -> Fill(iSample, waveform[iSample]);
-	      }
-	    }
-	    else{
-	      for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
-		h2PulseExcludedWaveforms[iDRS][iCH] -> Fill(iSample, waveform[iSample]);
-	      }
-	    }
-	  }
-	  else{
-	    for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
-	      h2LinearExcludedWaveforms[iDRS][iCH] -> Fill(iSample, waveform[iSample]);
-	    }
-	  }
-	}
-
-	// filling tree
-	tree -> Fill();	
-	channelNumber++;
-
-	// resetting parameters
-	linearSlope = 0.;
-	linearOffset = 0.;
-	linearRedChi2 = 0.;
-	pulseSlope = 0.;
-	pulseOffset = 0.;
-	pulseAmplitude = 0.;
-	pulseT0 = 0.;
-	pulseRiseTime = 0.;
-	pulseDecay = 0.;
-	pulseCharge = 0.;
-	pulseRedChi2 = 0.;
-      }
-      
-    }
-
-    eventNumber++;
-  }
-  delete DRSData;
-  DUTFile.close();
-
-  //////////////////
-  // computing noise
-  //////////////////
-  cout << __PRETTY_FUNCTION__ << ": computing noise" << endl;
-  double **noise = new double*[cfg -> _nDRS];
-  double **noiseError = new double*[cfg -> _nDRS];
-  TF1 ***fNoise = new TF1**[cfg -> _nDRS];
-  for(unsigned int iDRS=0; iDRS<cfg -> _nDRS; iDRS++){
-    fNoise[iDRS] = new TF1*[cfg -> _nCH[iDRS]];
-    noise[iDRS] = new double[cfg -> _nCH[iDRS]];
-    noiseError[iDRS] = new double[cfg -> _nCH[iDRS]];
-    for(unsigned int iCH=0; iCH<cfg -> _nCH[iDRS]; iCH++){
-      // fit is not Gaussian...
-      // if re-enabling the fit, remember to uncomment the delete statements for fNoise
-      // char name[1000];
-      // sprintf(name, "fNoise_%d_%d", iDRS, iCH);
-      // fNoise[iDRS][iCH] = new TF1(name, "[0] * exp(-((x-[1])*(x-[1]))/(2.*[2]*[2])) / (sqrt(2.*3.14156)*[2])", PLOTNOISEMIN, PLOTNOISEMAX);
-      // fNoise[iDRS][iCH] -> SetParNames("scale", "mean", "sigma");
-      // fNoise[iDRS][iCH] -> SetParameter(1, 0);
-      // fNoise[iDRS][iCH] -> SetParameter(2, h1Noise[iDRS][iCH] -> GetRMS());
-      // h1Noise[iDRS][iCH] -> Fit(name, "Q && R");
-      //      noise[iDRS][iCH] = fNoise[iDRS][iCH] -> GetParameter(2);
-      //      noiseError[iDRS][iCH] = fNoise[iDRS][iCH] -> GetParError(2);
-      noise[iDRS][iCH] = h1Noise[iDRS][iCH] -> GetRMS();
-      noiseError[iDRS][iCH] = 0.;
-    }
-  }
-  for(unsigned int iDRS=0; iDRS<cfg -> _nDRS; iDRS++){
-    for(unsigned int iCH=0; iCH<cfg -> _nCH[iDRS]; iCH++){
-      cout << __PRETTY_FUNCTION__ << ": noise[" << iDRS << "][" << iCH << "] = (" << noise[iDRS][iCH] << "+-" << noiseError[iDRS][iCH] << ")" << endl;
-    }
-  }
-  
-  ///////////////
-  // reading data
-  ///////////////
-  cout << __PRETTY_FUNCTION__ << ": converting DUT data" << endl;    
-  cout << __PRETTY_FUNCTION__ << ": reading data from " << fileNameIn << endl;  
-  DRSData = new DRSDataClass();
-  DUTFile.open(fileNameIn, ios::in | ios::binary);
-  if(!DUTFile){
-    cout << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot open file " << fileNameIn << endl;
-    return 1;
-  }
-  t0 = 0.;
-  endOfFile = false;
   eventNumber = 0;
   while(!endOfFile){
 
@@ -482,7 +280,7 @@ int convertDUT(const char *fileNameIn,
 	  fitWaveform -> reset();
 	}
 	else{
-	  fitWaveform -> fit(waveform, cfg, eventNumber, iDRS, iCH);
+	  fitWaveform -> fit(waveform, cfg, eventNumber, iDRS, iCH, h1Noise);
 	  linearSlope = fitWaveform -> getLinearSlope();
 	  linearOffset = fitWaveform -> getLinearOffset();
 	  linearRedChi2 = fitWaveform -> getLinearRedChi2();
@@ -515,9 +313,7 @@ int convertDUT(const char *fileNameIn,
 	       &&
 	       pulseRiseTime > cfg -> _pulseRiseTimeRange.min && pulseRiseTime < cfg -> _pulseRiseTimeRange.max
 	       &&
-	       pulseRedChi2 < cfg -> _pulseRedChi2Threshold
-	       &&
-	       pulseAmplitude > NOISETHRESHOLDSIGMA * noise[iDRS][iCH]){
+	       pulseRedChi2 < cfg -> _pulseRedChi2Threshold){
 	      for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
 		h2PulseSelectedWaveforms[iDRS][iCH] -> Fill(iSample, waveform[iSample]);
 	      }
@@ -558,6 +354,39 @@ int convertDUT(const char *fileNameIn,
     eventNumber++;
   }
 
+  //////////////////
+  // computing noise
+  //////////////////
+  cout << __PRETTY_FUNCTION__ << ": computing noise" << endl;
+  double **noise = new double*[cfg -> _nDRS];
+  double **noiseError = new double*[cfg -> _nDRS];
+  TF1 ***fNoise = new TF1**[cfg -> _nDRS];
+  for(unsigned int iDRS=0; iDRS<cfg -> _nDRS; iDRS++){
+    fNoise[iDRS] = new TF1*[cfg -> _nCH[iDRS]];
+    noise[iDRS] = new double[cfg -> _nCH[iDRS]];
+    noiseError[iDRS] = new double[cfg -> _nCH[iDRS]];
+    for(unsigned int iCH=0; iCH<cfg -> _nCH[iDRS]; iCH++){
+      // fit is not Gaussian...
+      // if re-enabling the fit, remember to uncomment the delete statements for fNoise
+      // char name[1000];
+      // sprintf(name, "fNoise_%d_%d", iDRS, iCH);
+      // fNoise[iDRS][iCH] = new TF1(name, "[0] * exp(-((x-[1])*(x-[1]))/(2.*[2]*[2])) / (sqrt(2.*3.14156)*[2])", PLOTNOISEMIN, PLOTNOISEMAX);
+      // fNoise[iDRS][iCH] -> SetParNames("scale", "mean", "sigma");
+      // fNoise[iDRS][iCH] -> SetParameter(1, 0);
+      // fNoise[iDRS][iCH] -> SetParameter(2, h1Noise[iDRS][iCH] -> GetRMS());
+      // h1Noise[iDRS][iCH] -> Fit(name, "Q && R");
+      //      noise[iDRS][iCH] = fNoise[iDRS][iCH] -> GetParameter(2);
+      //      noiseError[iDRS][iCH] = fNoise[iDRS][iCH] -> GetParError(2);
+      noise[iDRS][iCH] = h1Noise[iDRS][iCH] -> GetRMS();
+      noiseError[iDRS][iCH] = 0.;
+    }
+  }
+  for(unsigned int iDRS=0; iDRS<cfg -> _nDRS; iDRS++){
+    for(unsigned int iCH=0; iCH<cfg -> _nCH[iDRS]; iCH++){
+      cout << __PRETTY_FUNCTION__ << ": noise[" << iDRS << "][" << iCH << "] = (" << noise[iDRS][iCH] << "+-" << noiseError[iDRS][iCH] << ")" << endl;
+    }
+  }
+  
   ///////////////
   // writing tree
   ///////////////
