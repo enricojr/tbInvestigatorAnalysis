@@ -8,6 +8,13 @@ if [ $EOS -eq 0 ]; then
    export TBPATHINOUT=../../../output
    export TBPATHOUTOUT=../../../output
    export TBPATHININ=../../../raw   
+elif [ $EOS -eq 1 ]; then
+   echo "Setting Florian's paths"
+   export TBPATHINCFG=/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Run_Configs/
+   export TBPATHOUTCFG=/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Run_Configs/
+   export TBPATHINOUT=/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/DUT_converted/
+   export TBPATHOUTOUT=/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/DUT_converted
+   export TBPATHININ=/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017
 else
    echo "Setting eos paths"
    export TBPATHINCFG=/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/converted

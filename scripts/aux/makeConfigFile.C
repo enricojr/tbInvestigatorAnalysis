@@ -30,12 +30,12 @@ int makeConfigFile(const unsigned int run,
   const double linearRangeRight = 150.;
   pair<double, double> linearRange[5];
 
-  const double pulseRangeLeft = 150.;
-  const double pulseRangeRight = 150.;
+  const double pulseRangeLeft = 200.;
+  const double pulseRangeRight = 200.;
   pair<double, double> pulseRange[5];
   
-  const double pulseT0Left = 150.;
-  const double pulseT0Right = 50.;
+  const double pulseT0Left = 100.;
+  const double pulseT0Right = 100.;
   pair<double, double> pulseT0[5];
   
   const double pulseT0SelectionLeft = 125.;
@@ -101,7 +101,7 @@ int makeConfigFile(const unsigned int run,
     file << T0[i] << " " << pulseT0[i].first << " " << pulseT0[i].second << endl;
   }
   file << "# pulse fit, parameters initialization (value, min, max): rise time" << endl;
-  file << "6. 1. 50." << endl;
+  file << "6. 1. 100." << endl;
   file << "# pulse fit, parameters initialization (value, min, max): decay" << endl;
   file << "0. -100. 0." << endl;
   file << "# threshold for the reduced chi2 of the linear fit" << endl;
@@ -113,7 +113,7 @@ int makeConfigFile(const unsigned int run,
     file << pulseT0Selection[i].first << " " << pulseT0Selection[i].second << endl;
   }
   file << "# limits for pulse fit: rise time" << endl;
-  file << "1. 20." << endl;
+  file << "1. 100." << endl;
   file << "# time difference threshold for spill identification" << endl;
   file << "10." << endl;
   file << "# time difference threshold for inter-spill identification" << endl;
