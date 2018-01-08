@@ -20,7 +20,7 @@ int draw(const unsigned int run = 580,
 
   char fileName[1000];
   if(eos) sprintf(fileName, "/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/converted/run_%06d.cfg", run);
-  else sprintf(fileName, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Run_Configs/run_%06d.cfg", run);
+  else sprintf(fileName, "../../../cfg/run_%06d.cfg", run);
   cout << __PRETTY_FUNCTION__ << ": config fileName = " << fileName << endl;
   configClass *cfg = new configClass();
   if(cfg -> load(fileName)){
@@ -30,7 +30,7 @@ int draw(const unsigned int run = 580,
   cfg -> print();
   
   if(eos) sprintf(fileName, "/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/converted/DUT_%06d_000000.root", run);
-  else sprintf(fileName, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/DUT_converted/DUT_%06d_000000.root", run);
+  else sprintf(fileName, "../../../output/DUT_%06d_000000.root", run);
   cout << __PRETTY_FUNCTION__ << ": input fileName = " << fileName << endl;
   TFile *file = TFile::Open(fileName);
   if(file == NULL){
