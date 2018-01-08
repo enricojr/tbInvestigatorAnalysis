@@ -360,9 +360,9 @@ int convertDUT(const char *fileNameIn,
   cout << __PRETTY_FUNCTION__ << ": computing noise" << endl;
   double **noise = new double*[cfg -> _nDRS];
   double **noiseError = new double*[cfg -> _nDRS];
-  TF1 ***fNoise = new TF1**[cfg -> _nDRS];
+  //  TF1 ***fNoise = new TF1**[cfg -> _nDRS];
   for(unsigned int iDRS=0; iDRS<cfg -> _nDRS; iDRS++){
-    fNoise[iDRS] = new TF1*[cfg -> _nCH[iDRS]];
+    //    fNoise[iDRS] = new TF1*[cfg -> _nCH[iDRS]];
     noise[iDRS] = new double[cfg -> _nCH[iDRS]];
     noiseError[iDRS] = new double[cfg -> _nCH[iDRS]];
     for(unsigned int iCH=0; iCH<cfg -> _nCH[iDRS]; iCH++){

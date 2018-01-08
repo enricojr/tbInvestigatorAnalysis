@@ -18,6 +18,8 @@ using namespace std;
 #include <TCanvas.h>
 #include <TMultiGraph.h>
 #include <TPad.h>
+#include <TLegend.h>
+#include <TStyle.h>
 
 #define DZ 270000. // to compute track coordinates on DUT
 #define TIMECONVERSION 0.000000025 // to convert telescope time
@@ -91,6 +93,18 @@ void drawSpill(const vector<spillClass *> spillDUT,
 	       const vector<spillClass *> spillTelescope,
 	       const unsigned int iSpill){
 
+  gStyle -> SetPaperSize(20, 20);
+  gStyle -> SetPadTopMargin(0.12);
+  gStyle -> SetPadRightMargin(0.07);
+  gStyle -> SetPadBottomMargin(0.15);
+  gStyle -> SetPadLeftMargin(0.2);
+  gStyle -> SetOptTitle(0);
+  gStyle -> SetOptFit(1111);
+  gStyle->SetTitleW(0.6);
+  gStyle -> SetOptStat(0);
+  gStyle -> SetPadTickX(1);
+  gStyle -> SetPadTickY(1);
+
   TGraph *grDUT = new TGraph();
   for(unsigned int iEvent=0; iEvent<spillDUT[iSpill] -> _event.size(); iEvent++){
     for(unsigned int iHit=0; iHit<spillDUT[iSpill] -> _event[iEvent] -> _hit.size(); iHit++){
@@ -99,8 +113,10 @@ void drawSpill(const vector<spillClass *> spillDUT,
     }
   }
   grDUT -> SetFillColor(0);
+  grDUT -> SetFillStyle(0);
   grDUT -> SetMarkerStyle(20);
   grDUT -> SetMarkerColor(2);
+  grDUT -> SetName("DUT");
 
   TGraph *grTelescope = new TGraph();
   for(unsigned int iEvent=0; iEvent<spillTelescope[iSpill] -> _event.size(); iEvent++){
@@ -110,21 +126,38 @@ void drawSpill(const vector<spillClass *> spillDUT,
     }
   }
   grTelescope -> SetFillColor(0);
+  grTelescope -> SetFillStyle(0);
   grTelescope -> SetMarkerStyle(20);
   grTelescope -> SetMarkerColor(1);
+  grTelescope -> SetName("Telescope");  
 
   TCanvas *cc = new TCanvas("cc", "cc", 1000, 0, 1000, 1000);
   TMultiGraph *mg = new TMultiGraph();
   mg -> Add(grDUT, "p");
   mg -> Add(grTelescope, "p");
   mg -> Draw("ap");
+  mg -> GetXaxis() -> SetTitle("Frame number");
+  mg -> GetYaxis() -> SetTitle("Timestamp");
+  mg -> GetYaxis() -> SetTitleOffset(2);
+  TLegend *leg = cc -> BuildLegend(0.2815631,0.713258,0.5190381,0.7944502);
+  leg -> SetFillColor(0);
+  leg -> SetFillStyle(0);
+  leg -> SetLineColor(0);
+  leg -> Draw();
+  cc -> Modified();
+  cc -> Update();
 
   char name[1000];
   sprintf(name, "spill_%d.C", iSpill);
   cc -> SaveAs(name);
+  sprintf(name, "spill_%d.png", iSpill);
+  cc -> SaveAs(name);
+  sprintf(name, "spill_%d.pdf", iSpill);
+  cc -> SaveAs(name);
 
   delete mg;
   delete cc;
+  delete leg;
   
   return ;
 }

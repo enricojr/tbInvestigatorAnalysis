@@ -288,7 +288,9 @@ int synchronize(const char *fileNameInTelescope,
 	  }
 	} 
       }
-    
+      if(iSpill == 96) drawSpill(spillDUT,
+				 spillTelescope,
+				 iSpill);      
     }
     else{
       cout << __PRETTY_FUNCTION__ << ": WARNING!!! - mismatching number of events at spill " << iSpill << ": " << spillDUT[iSpill] -> _event.size() << " (DUT) vs " << spillTelescope[iSpill] -> _event.size() << " (telescope)" << endl;
