@@ -143,7 +143,7 @@ int synchronize(const char *fileNameInTelescope,
   treeOut -> Branch("yTrack",&yTrack,"yTrack/D");
   Double_t timeTelescope = 0.;
   treeOut -> Branch("timeTelescope",&timeTelescope,"timeTelescope/D");
-  treeOut -> Branch("FrameNumber", &FrameNumber);
+  treeOut -> Branch("FrameNumber", &eventIDDUT);
   Double_t redChi2 = 0.;
   treeOut->Branch("redChi2Telescope",&redChi2,"redChi2Telescope/D");
   Int_t nTrack = 0;
