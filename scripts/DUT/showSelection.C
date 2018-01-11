@@ -70,6 +70,8 @@ int showSelection(const unsigned int run,
   
   gStyle -> SetOptFit(1);
 
+  const int shift = 2;
+  
   const unsigned int nEvents = 0;
   const unsigned int startEvent = 0;
   Int_t eventNumber = 0;
@@ -290,7 +292,7 @@ int showSelection(const unsigned int run,
 	}
 
 	// here
-	if(isSelected(eventNumber, DRSNumber, CHNumber, event)){
+	if(isSelected(eventNumber+shift, DRSNumber, CHNumber, event)){
 	  for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
 	    h2PulseSelectedWaveforms[DRSNumber][CHNumber] -> Fill(iSample, waveform[iSample]);
 	  }
