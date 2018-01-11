@@ -182,10 +182,12 @@ int showSelection(const unsigned int run,
     for(unsigned int iCH=0; iCH<cfg -> _nCH[iDRS]; iCH++){
       char name[1000];
       char title[1000];
+      
       sprintf(name, "h2PulseExcludedWaveforms_DRS_%d_CH_%d", iDRS, iCH);
       if(nEvents == 0) sprintf(title, "pulse fit excluded waveforms DRS %d CH %d, full statistics", iDRS, iCH);
       else sprintf(title, "pulse fit excluded waveforms DRS %d CH %d, %d events", iDRS, iCH, nEvents);
-      h2PulseExcludedWaveforms[iDRS][iCH] = new TH2F(name, title, NDRSSAMPLES, 0, NDRSSAMPLES, PLOTWAVEFORMNBINSAMPLITUDE, PLOTWAVEFORMMINAMPLITUDE, PLOTWAVEFORMMAXAMPLITUDE); 
+      h2PulseExcludedWaveforms[iDRS][iCH] = new TH2F(name, title, NDRSSAMPLES, 0, NDRSSAMPLES, PLOTWAVEFORMNBINSAMPLITUDE, PLOTWAVEFORMMINAMPLITUDE, PLOTWAVEFORMMAXAMPLITUDE);
+      
       sprintf(name, "h2PulseSelectedWaveforms_DRS_%d_CH_%d", iDRS, iCH);
       if(nEvents == 0) sprintf(title, "pulse fit selected waveforms DRS %d CH %d, full statistics", iDRS, iCH);
       else sprintf(title, "pulse fit selected waveforms DRS %d CH %d, %d events", iDRS, iCH, nEvents);
