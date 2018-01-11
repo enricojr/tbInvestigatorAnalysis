@@ -8,10 +8,11 @@ using namespace std;
 #include <TH1.h>
 #include <TH2.h>
 #include <TGraph.h>
+#include <TGraphErrors.h>
 #include <TF1.h>
 #include <TAxis.h>
 #include <TStyle.h>
-#include <TPaveText.h>
+#include <TColor.h>
 
 #define XNBINS 2000
 #define XMIN -10000
@@ -25,11 +26,25 @@ using namespace std;
 #define AMPLITUDEMIN 0
 #define AMPLITUDEMAX 32000
 
+#define NSCAN 40
+#define SCANSIZE 50
+
 int quickEfficiency(const unsigned int run,
 		    const double pixelSize,
-		    const bool lxplus = false){
+		    const bool lxplus = true){
 
   gStyle -> SetOptFit(1);
+  const Int_t NRGBs = 5;
+  const Int_t NCont = 255;
+  
+  Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
+  Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };
+  Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };
+  Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };
+  TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+  gStyle->SetNumberContours(NCont);
+
+  gStyle -> SetPalette(55);
   
   ////////////
   // constants
@@ -46,6 +61,23 @@ int quickEfficiency(const unsigned int run,
   TGraph *grDUT = new TGraph();
   TH1F *h1Amplitude = new TH1F("h1Amplitude", "amplitude distribution", AMPLITUDENBINS, AMPLITUDEMIN, AMPLITUDEMAX);
   TH1F *h1Charge = new TH1F("h1Charge", "charge distribution", AMPLITUDENBINS, AMPLITUDEMIN, AMPLITUDEMAX);
+
+  TH1F **h1DUTX = new TH1F*[NSCAN];
+  TH1F **h1DUTY = new TH1F*[NSCAN];
+  for(unsigned int i=0; i<NSCAN; i++){
+    char name[100];
+    sprintf(name, "iX%03d", i);
+    h1DUTX[i] = new TH1F(name, name, 10*XNBINS, XMIN, XMAX);
+    sprintf(name, "iY%03d", i);
+    h1DUTY[i] = new TH1F(name, name, 10*YNBINS, YMIN, YMAX);
+  }
+
+  TGraphErrors *grDUTNoiseX = new TGraphErrors();
+  TGraphErrors *grDUTNoiseY = new TGraphErrors();
+  TGraphErrors *grDUTX = new TGraphErrors();
+  TGraphErrors *grDUTY = new TGraphErrors();
+  TGraphErrors *grDUTSNRX = new TGraphErrors();
+  TGraphErrors *grDUTSNRY = new TGraphErrors();
   
   ///////////////
   // opening file
@@ -104,6 +136,13 @@ int quickEfficiency(const unsigned int run,
     if(found){
       grDUT -> SetPoint(grDUT -> GetN(), xTrack, yTrack);
       h1Charge -> Fill(charge);
+      for(unsigned int i=0; i<NSCAN; i++){
+	const double threshold = i * SCANSIZE;
+	if(charge > threshold){
+	  h1DUTX[i] -> Fill(xTrack);
+	  h1DUTY[i] -> Fill(yTrack);
+	}
+      }
     }
     else continue;
     
@@ -285,13 +324,80 @@ int quickEfficiency(const unsigned int run,
   cout << __PRETTY_FUNCTION__ << ": nEventsPerPixelExpected = " << nEventsPerPixelExpected << endl;
   const double nEventsPerPixelMeasured = grDUT -> GetN()  / 4;
   cout << __PRETTY_FUNCTION__ << ": nEventsPerPixelMeasured = " << nEventsPerPixelMeasured << endl;
+
+  /////////////////////////
+  // computing noise curves
+  /////////////////////////
+  cout << __PRETTY_FUNCTION__ << ": computing noise curves" << endl;
+
+  double firstNoiseX = 0.;
+  double firstX = 0.;
+  for(unsigned int i=0; i<NSCAN; i++){
+    double mean = 0.;
+    double rms = 0.;
+    unsigned int count = 0;
+    for(int j=0; j<h1DUTX[i]->GetXaxis()->GetNbins(); j++){
+      const double xVal = h1DUTX[i] -> GetBinLowEdge(j);
+      if(xVal > RoIInfX && xVal < RoIInfX+2*pixelSize){
+	const double yVal = h1DUTX[i] -> GetBinContent(j);
+	mean += yVal;
+	rms += yVal*yVal;
+	count ++;
+      }
+      else continue;
+    }
+    mean /= count;
+    rms = sqrt(rms/count-mean*mean);
+    if(i==0){
+      firstNoiseX = mean;
+      firstX = h1DUTX[i] -> Integral();
+    }
+    const double noiseMean = mean/firstNoiseX;
+    const double noiseRms = rms/firstNoiseX;
+    const double allMean = h1DUTX[i] -> Integral()/firstX;
+    grDUTNoiseX -> SetPoint(i, i*SCANSIZE, noiseMean);
+    grDUTNoiseX -> SetPointError(i, SCANSIZE/2, noiseRms);
+    grDUTX -> SetPoint(i, i*SCANSIZE, allMean);
+    grDUTSNRX -> SetPoint(i, i*SCANSIZE, 1/(allMean/noiseMean-1));
+  }
+
+  double firstNoiseY = 0.;
+  double firstY = 0.;
+  for(unsigned int i=0; i<NSCAN; i++){
+    double mean = 0.;
+    double rms = 0.;
+    unsigned int count = 0;
+    for(int j=0; j<h1DUTY[i]->GetXaxis()->GetNbins(); j++){
+      const double xVal = h1DUTY[i] -> GetBinLowEdge(j);
+      if(xVal > RoIInfY && xVal < RoIInfY+2*pixelSize){
+	const double yVal = h1DUTY[i] -> GetBinContent(j);
+	mean += yVal;
+	rms += yVal*yVal;
+	count ++;
+      }
+      else continue;
+    }
+    mean /= count;
+    rms = sqrt(rms/count-mean*mean);
+    if(i==0){
+      firstNoiseY = mean;
+      firstY = h1DUTY[i] -> Integral();
+    }
+    const double noiseMean = mean/firstNoiseY;
+    const double noiseRms = rms/firstNoiseY;
+    const double allMean = h1DUTY[i] -> Integral()/firstY;
+    grDUTNoiseY -> SetPoint(i, i*SCANSIZE, noiseMean);
+    grDUTNoiseY -> SetPointError(i, SCANSIZE/2, noiseRms);
+    grDUTY -> SetPoint(i, i*SCANSIZE, allMean);
+    grDUTSNRY -> SetPoint(i, i*SCANSIZE, 1/(allMean/noiseMean-1));
+  }
   
   ///////////
   // plotting
   ///////////
   cout << __PRETTY_FUNCTION__ << ": plotting" << endl;
   TCanvas *cc = new TCanvas("cc", "cc", 0, 0, 2000, 1000);
-  cc -> Divide(2,2);
+  cc -> Divide(4,2);
 
   cc -> cd(1);
   h1X -> SetLineColor(1);
@@ -299,23 +405,20 @@ int quickEfficiency(const unsigned int run,
   h1X -> GetXaxis() -> SetRangeUser(RoIInfX-RoISizeX, RoISupX+RoISizeX);
   h1X -> Draw();
   
-  cc -> cd(2);
+  cc -> cd(5);
   h1Y -> SetLineColor(1);
   h1Y -> SetLineWidth(3);
   h1Y -> GetXaxis() -> SetRangeUser(RoIInfY-RoISizeY, RoISupY+RoISizeY);
   h1Y -> Draw();
 
-  cc -> cd(3);
+  cc -> cd(2);
   grXY -> Draw("ap");
   grXY -> GetXaxis() -> SetRangeUser(RoIInfX-RoISizeX, RoISupX+RoISizeX);
   grXY -> GetYaxis() -> SetRangeUser(RoIInfY-RoISizeY, RoISupY+RoISizeY);
   grDUT -> SetMarkerColor(2);
   grDUT -> Draw("p");
 
-  cc -> cd(4);
-  //  TPaveText *pt = new TPaveText(0,0,1,1);
-  //  pt -> AddText("pippo");
-  //  pt -> Draw();
+  cc -> cd(6);
   h1Amplitude -> SetLineColor(1);
   h1Amplitude -> SetLineWidth(3);
   //  h1Amplitude -> GetCumulative() -> Draw();
@@ -323,6 +426,46 @@ int quickEfficiency(const unsigned int run,
   h1Charge -> SetLineWidth(3);
   //  h1Charge -> GetCumulative() -> Draw();
   h1Charge -> Draw();
+
+  cc -> cd(3);
+  for(unsigned int i=0; i<NSCAN; i++){
+    const unsigned int color = TColor::GetColorPalette(int(i*NCont/(NSCAN+1)));
+    h1DUTX[i] -> GetXaxis() -> SetRangeUser(RoIInfX, RoISupX);
+    h1DUTX[i] -> SetFillColor(color);
+    h1DUTX[i] -> SetLineColor(color);
+    if(i==0) h1DUTX[i] -> Draw();
+    else h1DUTX[i] -> Draw("same");
+  }
+  
+  cc -> cd(7);
+  for(unsigned int i=0; i<NSCAN; i++){
+    const unsigned int color = TColor::GetColorPalette(int(i*NCont/(NSCAN+1)));
+    h1DUTY[i] -> GetXaxis() -> SetRangeUser(RoIInfY, RoISupY);
+    h1DUTY[i] -> SetFillColor(color);
+    h1DUTY[i] -> SetLineColor(color);
+    if(i==0) h1DUTY[i] -> Draw();
+    else h1DUTY[i] -> Draw("same");
+  }
+
+  cc -> cd(4);
+  grDUTNoiseX -> SetMarkerStyle(20);
+  grDUTX -> SetMarkerStyle(20);
+  grDUTSNRX -> SetMarkerStyle(20);
+  grDUTX -> SetMarkerColor(2);
+  grDUTSNRX -> SetMarkerColor(4);
+  grDUTNoiseX -> Draw("ap");
+  grDUTX -> Draw("p");
+  grDUTSNRX -> Draw("pl");
+
+  cc -> cd(8);
+  grDUTNoiseY -> SetMarkerStyle(20);
+  grDUTY -> SetMarkerStyle(20);
+  grDUTSNRY -> SetMarkerStyle(20);
+  grDUTY -> SetMarkerColor(2);
+  grDUTSNRY -> SetMarkerColor(4);
+  grDUTNoiseY -> Draw("ap");
+  grDUTY -> Draw("p");
+  grDUTSNRY -> Draw("pl");
   
   return 0;
 }
