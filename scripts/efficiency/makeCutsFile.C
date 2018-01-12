@@ -16,7 +16,7 @@ int makeCutsFile(const unsigned int run,
   else sprintf(fileNameCuts, "../../../output/cuts_%06d.txt", run);
   cout << __PRETTY_FUNCTION__ << ": fileNameCuts = " << fileNameCuts << endl;
   char fileNameCfg[1000];
-  if(lxplus) sprintf(fileNameCfg, "/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/run_%06d.cfg", run);
+  if(lxplus) sprintf(fileNameCfg, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Run_Configs/run_%06d.cfg", run);
   else sprintf(fileNameCfg, "../../../cfg/run_%06d.cfg", run);
   cout << __PRETTY_FUNCTION__ << ": fileNameCfg = " << fileNameCfg << endl;
 
