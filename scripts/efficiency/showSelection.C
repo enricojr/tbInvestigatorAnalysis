@@ -84,8 +84,8 @@ int showSelection(const unsigned int run,
   char fileNameCfg[2000];
 
   if(lxplus){
-    sprintf(fileNameListSelected, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/listSelected_%06d.txt", run);
-    sprintf(fileNameListExcluded, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/listExcluded_%06d.txt", run);
+    sprintf(fileNameListSelected, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Cuts/listSelected_%06d.txt", run);
+    sprintf(fileNameListExcluded, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Cuts/listExcluded_%06d.txt", run);
     sprintf(fileNameCfg, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Run_Configs/run_%06d.cfg", run);
     sprintf(fileNameIn, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/DUT_converted/DUT_%06d.dat", run);
   }

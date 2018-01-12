@@ -64,16 +64,20 @@ int makeSelectionList(const unsigned int run,
   /////////////////////
   cout << __PRETTY_FUNCTION__ << ": setting file names" << endl;
   char fileNameCuts[1000];
-  sprintf(fileNameCuts, "../../../output/cuts_%06d.txt", run);
+  if(lxplus) sprintf(fileNameCuts, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Cuts/cuts_%06d.txt", run);
+  else sprintf(fileNameCuts, "../../../output/cuts_%06d.txt", run);
   cout << __PRETTY_FUNCTION__ << ": fileNameCuts = " << fileNameCuts << endl;
   char fileNameIn[1000];
-  sprintf(fileNameIn, "../../../output/sync_%06d_000000.root", run);
+  if(lxplus) sprintf(fileNameIn, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Synced/sync_%06d_000000.root", run);
+  else sprintf(fileNameIn, "../../../output/sync_%06d_000000.root", run);
   cout << __PRETTY_FUNCTION__ << ": fileNameIn = " << fileNameIn << endl;
   char fileNameListSelected[1000];
-  sprintf(fileNameListSelected, "../../../output/listSelected_%06d.txt", run);
+  if(lxplus) sprintf(fileNameListSelected, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Cuts/listSelected_%06d.txt", run);
+  else sprintf(fileNameListSelected, "../../../output/listSelected_%06d.txt", run);
   cout << __PRETTY_FUNCTION__ << ": fileNameListSelected = " << fileNameListSelected << endl;
   char fileNameListExcluded[1000];
-  sprintf(fileNameListExcluded, "../../../output/listExcluded_%06d.txt", run);
+  if(lxplus) sprintf(fileNameListExcluded, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Cuts/listExcluded_%06d.txt", run);
+  else sprintf(fileNameListExcluded, "../../../output/listExcluded_%06d.txt", run);
   cout << __PRETTY_FUNCTION__ << ": fileNameListExcluded = " << fileNameListExcluded << endl;
   const char *treeName = "syncedData";
   cout << __PRETTY_FUNCTION__ << ": treeName = " << treeName << endl;
