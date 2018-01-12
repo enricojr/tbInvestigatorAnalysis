@@ -87,7 +87,7 @@ int showSelection(const unsigned int run,
     sprintf(fileNameListSelected, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Cuts/listSelected_%06d.txt", run);
     sprintf(fileNameListExcluded, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Cuts/listExcluded_%06d.txt", run);
     sprintf(fileNameCfg, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Run_Configs/run_%06d.cfg", run);
-    sprintf(fileNameIn, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/DUT_converted/DUT_%06d.dat", run);
+    sprintf(fileNameIn, "/eos/atlas/atlascerngroupdisk/pixel-upgrade/cmos/TowerJazz/Investigator/Testbeam/Testbeam2017/DUT_%06d.dat", run);
   }
   else{
     sprintf(fileNameListSelected, "../../../output/listSelected_%06d.txt", run);
