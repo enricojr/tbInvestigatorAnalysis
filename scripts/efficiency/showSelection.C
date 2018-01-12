@@ -39,7 +39,7 @@ public:
   unsigned int CH;
 };
 
-bool isSelected(const unsigned int frame,
+bool isInFile(const unsigned int frame,
 		const unsigned int DRS,
 		const unsigned int CH,
 		vector<eventClass> &event){
@@ -70,7 +70,7 @@ int showSelection(const unsigned int run,
   
   gStyle -> SetOptFit(1);
 
-  const int shift = 2;
+  const int shift = 0;
   
   const unsigned int nEvents = 0;
   const unsigned int startEvent = 0;
@@ -79,16 +79,19 @@ int showSelection(const unsigned int run,
   Int_t CHNumber = 0;
 
   char fileNameIn[2000];
-  char fileNameList[2000];
+  char fileNameListSelected[2000];
+  char fileNameListExcluded[2000];
   char fileNameCfg[2000];
 
   if(lxplus){
-    sprintf(fileNameList, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/incWF_%d.txt", run);
+    sprintf(fileNameListSelected, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/listSelected_%06d.txt", run);
+    sprintf(fileNameListExcluded, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/listExcluded_%06d.txt", run);
     sprintf(fileNameCfg, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/Run_Configs/run_%06d.cfg", run);
     sprintf(fileNameIn, "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/Output/DUT_converted/DUT_%06d.dat", run);
   }
   else{
-    sprintf(fileNameList, "../../../output/incWF_%d.txt", run);
+    sprintf(fileNameListSelected, "../../../output/listSelected_%06d.txt", run);
+    sprintf(fileNameListExcluded, "../../../output/listExcluded_%06d.txt", run);
     sprintf(fileNameCfg, "../../../cfg/run_%06d.cfg", run);
     sprintf(fileNameIn, "../../../raw/DUT_%06d.dat", run);
   }
@@ -96,23 +99,39 @@ int showSelection(const unsigned int run,
   TCanvas *cc = new TCanvas("cc", "cc", 0, 0, 2000, 1000);
   cc -> Divide(4,4);
   
-  ///////////////////////
-  // reading file list //
-  ///////////////////////
-  vector<eventClass> event;
-  ifstream file(fileNameList);
+  ////////////////////////////////
+  // reading file list selected //
+  ////////////////////////////////
+  vector<eventClass> eventSelected;
+  ifstream file(fileNameListSelected);
   if(!file){
-    cout  << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot open file " << fileNameList << endl;
+    cout  << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot open file " << fileNameListSelected << endl;
     return 1;
   }
   string LINE = "";
   while(getline(file, LINE)){
-    eventClass newEvent;
-    sscanf(LINE.c_str(), "%d %d %d", &newEvent.frame, &newEvent.DRS, &newEvent.CH);
-    event.push_back(newEvent);
+    eventClass newEventSelected;
+    sscanf(LINE.c_str(), "%d %d %d", &newEventSelected.frame, &newEventSelected.DRS, &newEventSelected.CH);
+    eventSelected.push_back(newEventSelected);
   }
   file.close();
 
+  ////////////////////////////////
+  // reading file list excluded //
+  ////////////////////////////////
+  vector<eventClass> eventExcluded;
+  file.open(fileNameListExcluded);
+  if(!file){
+    cout  << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot open file " << fileNameListExcluded << endl;
+    return 1;
+  }
+  while(getline(file, LINE)){
+    eventClass newEventExcluded;
+    sscanf(LINE.c_str(), "%d %d %d", &newEventExcluded.frame, &newEventExcluded.DRS, &newEventExcluded.CH);
+    eventExcluded.push_back(newEventExcluded);
+  }
+  file.close();
+  
   /////////////////////////////
   // reading configuration file
   /////////////////////////////
@@ -294,17 +313,40 @@ int showSelection(const unsigned int run,
 	}
 
 	// here
-	if(isSelected(eventNumber+shift, DRSNumber, CHNumber, event)){
+	if(isInFile(eventNumber+shift, DRSNumber, CHNumber, eventSelected)){
 	  for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
 	    h2PulseSelectedWaveforms[DRSNumber][CHNumber] -> Fill(iSample, waveform[iSample]);
 	  }
+	  // // tmp
+	  // cout << "++++++++++++++++++++++++++++++++++++++++++ SELECTED " << eventNumber << endl; // tmp
+	  // TCanvas *cc = new TCanvas("cc", "cc", 0, 0, 500, 250);
+	  // TH1F *h1 = new TH1F("", "", 1024, 0, 1024);
+	  // for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
+	  //   h1 -> Fill(iSample, waveform[iSample]);
+	  // }
+	  // h1 -> Draw();
+	  // gPad -> WaitPrimitive();
+	  // delete h1;
+	  // delete cc;
 	}
-	else{
+
+	if(isInFile(eventNumber+shift, DRSNumber, CHNumber, eventExcluded)){
 	  for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
 	    h2PulseExcludedWaveforms[DRSNumber][CHNumber] -> Fill(iSample, waveform[iSample]);
 	  }
+	  // // tmp
+	  // cout << "++++++++++++++++++++++++++++++++++++++++++ EXCLUDED " << eventNumber << endl; // tmp
+	  // TCanvas *cc = new TCanvas("cc", "cc", 0, 0, 500, 250);
+	  // TH1F *h1 = new TH1F("", "", 1024, 0, 1024);
+	  // for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
+	  //   h1 -> Fill(iSample, waveform[iSample]);
+	  // }
+	  // h1 -> Draw();
+	  // gPad -> WaitPrimitive();
+	  // delete h1;
+	  // delete cc;
 	}
-
+	
       }
       
     }
@@ -835,7 +877,7 @@ int showSelection(const unsigned int run,
   DUTFile.close();
   delete DRSData;
   delete cfg;
-  event.clear();
+  eventSelected.clear();
 
   return 0;
 }
