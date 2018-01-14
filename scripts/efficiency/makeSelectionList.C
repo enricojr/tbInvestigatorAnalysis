@@ -164,7 +164,7 @@ int makeSelectionList(const unsigned int run,
   for(unsigned int iCH=0; iCH<NCH; iCH++){
     getline(fileCuts, text);
     sscanf(text.c_str(), "%lf %lf", &amplitudeCut[iCH].first, &amplitudeCut[iCH].second);
-    cout << __PRETTY_FUNCTION__ << ": amplitudeCut[" << iCH << "] = " << amplitudeCut[iCH].first << ", " << T0Cut[iCH].second << endl;
+    cout << __PRETTY_FUNCTION__ << ": amplitudeCut[" << iCH << "] = " << amplitudeCut[iCH].first << ", " << amplitudeCut[iCH].second << endl;
   }
   getline(fileCuts, text);
   for(unsigned int iCH=0; iCH<NCH; iCH++){

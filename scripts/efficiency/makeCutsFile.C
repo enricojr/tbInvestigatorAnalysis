@@ -46,20 +46,20 @@ int makeCutsFile(const unsigned int run,
   file << cfg -> _pulseT0Range[0][2].min << " " << cfg -> _pulseT0Range[0][2].max << endl;
   file << cfg -> _pulseT0Range[1][0].min << " " << cfg -> _pulseT0Range[1][0].max << endl;
   file << "# rise time cut" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
+  file << "0 45" << endl;
+  file << "0 45" << endl;
+  file << "0 45" << endl;
+  file << "0 45" << endl;
   file << "# amplitude cut" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
+  file << "400 1000000" << endl;
+  file << "400 1000000" << endl;
+  file << "400 1000000" << endl;
+  file << "400 1000000" << endl;
   file << "# red chi2 cut" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
-  file << "0 1000000" << endl;
+  file << "0 10" << endl;
+  file << "0 10" << endl;
+  file << "0 10" << endl;
+  file << "0 10" << endl;
   file.close();
 
   ///////////

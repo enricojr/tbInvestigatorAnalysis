@@ -230,6 +230,8 @@ int showSelection(const unsigned int run,
   eventNumber = 0;
   while(!endOfFile){
 
+    //    if(eventNumber > 150000) break; // tmp
+
     if(DUTFile.eof()) break;
     
     endOfFile = goToEventHeader(DUTFile, cfg -> _debugLevel);
