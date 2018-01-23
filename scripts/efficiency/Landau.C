@@ -17,13 +17,24 @@ using namespace std;
 #include <TStyle.h>
 #include <TLine.h>
 #include <TPaveText.h>
+#include <TLegend.h>
 
 int Landau(const unsigned int run,
-	   const char *fileNameDUTPosition,                        
+	   const char *fileNameDUTPosition,      
+	   TH1F *h1Landau,                  
+	   TH1F *h1LandauSelected,                  
+	   TH2F *h2LandauVsRiseTime,
+	   TH2F *h2LandauVsRiseTimeSelected,
+	   TH1F *h1LandauCluster,                  
+	   TH1F *h1LandauClusterSelected,                  
+	   TH2F *h2LandauClusterVsRiseTime,
+	   TH2F *h2LandauClusterVsRiseTimeSelected,
 	   const unsigned int nEvents = 0,
 	   const unsigned int startEvent = 0,
 	   const bool lxplus=true,
 	   const bool positionCorrected = true){
+
+  gErrorIgnoreLevel = kWarning;
 
   ////////////////////////////////
   // loading calibration constants
@@ -56,10 +67,10 @@ int Landau(const unsigned int run,
     }
   }
   for(unsigned int i=0; i<4; i++){
-    cout << __PRETTY_FUNCTION__ << ": offset[" << i << "] = " << offset[i] << endl;
-    cout << __PRETTY_FUNCTION__ << ": slope[" << i << "] = " << slope[i] << endl;
-    cout << __PRETTY_FUNCTION__ << ": offset_error[" << i << "] = " << offset_error[i] << endl;
-    cout << __PRETTY_FUNCTION__ << ": slope_error[" << i << "] = " << slope_error[i] << endl;
+    // cout << __PRETTY_FUNCTION__ << ": offset[" << i << "] = " << offset[i] << endl;
+    // cout << __PRETTY_FUNCTION__ << ": slope[" << i << "] = " << slope[i] << endl;
+    // cout << __PRETTY_FUNCTION__ << ": offset_error[" << i << "] = " << offset_error[i] << endl;
+    // cout << __PRETTY_FUNCTION__ << ": slope_error[" << i << "] = " << slope_error[i] << endl;
   }
   
   ///////////////////////////
@@ -91,10 +102,11 @@ int Landau(const unsigned int run,
   cout << __PRETTY_FUNCTION__ << ": reading configuration file " << fileNameCfg << endl;
   configClass *cfg = new configClass();
   if(cfg -> load(fileNameCfg)){
+
     cout << __PRETTY_FUNCTION__ << ": ERROR!!! - cannot load configuration" << endl;
     return 1;
   }
-  cfg -> print();
+  //  cfg -> print();
 
   ///////////////
   // loading cuts
@@ -164,10 +176,10 @@ int Landau(const unsigned int run,
     cout << __PRETTY_FUNCTION__ << ": ERROR!!! - run not found in list: " << run << endl;
     return 1;
   }
-  cout << __PRETTY_FUNCTION__ << ": xMin = " << xMin << endl;
-  cout << __PRETTY_FUNCTION__ << ": xMax = " << xMax << endl;
-  cout << __PRETTY_FUNCTION__ << ": yMin = " << yMin << endl;
-  cout << __PRETTY_FUNCTION__ << ": yMax = " << yMax << endl;
+  // cout << __PRETTY_FUNCTION__ << ": xMin = " << xMin << endl;
+  // cout << __PRETTY_FUNCTION__ << ": xMax = " << xMax << endl;
+  // cout << __PRETTY_FUNCTION__ << ": yMin = " << yMin << endl;
+  // cout << __PRETTY_FUNCTION__ << ": yMax = " << yMax << endl;
 
   ///////////////////////////////////////
   // computing position of the DUT center
@@ -181,13 +193,10 @@ int Landau(const unsigned int run,
   xMax = xMax - xSize/4;
   yMin = yMin + ySize/4;
   yMax = yMax - ySize/4;
-  cout << __PRETTY_FUNCTION__ << ": xMin = " << xMin << endl;
-  cout << __PRETTY_FUNCTION__ << ": xMax = " << xMax << endl;
-  cout << __PRETTY_FUNCTION__ << ": yMin = " << yMin << endl;
-  cout << __PRETTY_FUNCTION__ << ": yMax = " << yMax << endl;
-
-  TH1F *h1Landau = new TH1F("h1Landau", "Landau fit to unselected data", 64, 0, 64000);
-  TH1F *h1LandauSelected = new TH1F("h1LandauSelected", "h1LandauSelected", 64, 0, 64000);
+  // cout << __PRETTY_FUNCTION__ << ": xMin = " << xMin << endl;
+  // cout << __PRETTY_FUNCTION__ << ": xMax = " << xMax << endl;
+  // cout << __PRETTY_FUNCTION__ << ": yMin = " << yMin << endl;
+  // cout << __PRETTY_FUNCTION__ << ": yMax = " << yMax << endl;
 
   //////////////////////
   // opening synced file
@@ -236,6 +245,8 @@ int Landau(const unsigned int run,
        && 
        yTrack > yMin && yTrack < yMax){
       double clusterEnergy = 0.;
+      double riseTimeMax = 0.;
+      double amplitudeMax = 0.;
       bool isSelected =false;
       for(unsigned int iCH=0; iCH<5; iCH++){
 	if(iCH==3) continue; // reset signal
@@ -256,9 +267,21 @@ int Landau(const unsigned int run,
 	if(passesT0Cut * passesAmplitudeCut * passesRiseTimeCut * passesRedChi2Cut != 0){
 	  isSelected = true;
 	}
+	if(pulseAmplitude > amplitudeMax){
+	  amplitudeMax = pulseAmplitude;
+	  riseTimeMax = pulseRiseTime;
+	}
+	if(pulseAmplitude != 0){
+	  h1Landau -> Fill(pulseAmplitude);
+	  if(isSelected) h1LandauSelected -> Fill(pulseAmplitude);
+	  h2LandauVsRiseTime -> Fill(pulseAmplitude, riseTimeMax);
+	  if(isSelected) h2LandauVsRiseTimeSelected -> Fill(pulseAmplitude, riseTimeMax);	  
+	}
       }
-      h1Landau -> Fill(clusterEnergy);
-      if(isSelected) h1LandauSelected -> Fill(clusterEnergy);
+      h1LandauCluster -> Fill(clusterEnergy);
+      if(isSelected) h1LandauClusterSelected -> Fill(clusterEnergy);
+      h2LandauClusterVsRiseTime -> Fill(clusterEnergy, riseTimeMax);
+      if(isSelected) h2LandauClusterVsRiseTimeSelected -> Fill(clusterEnergy, riseTimeMax);
     }
     else continue;
   }
@@ -269,34 +292,203 @@ int Landau(const unsigned int run,
   cout << __PRETTY_FUNCTION__ << ": closing synced file" << endl;
   fileSynced -> Close();
   delete fileSynced;
+  delete cfg;
 
+  return 0;
+}
+
+int loop(){
+
+  vector<unsigned int> run;
+
+  // run.push_back(807);
+  // run.push_back(812);
+  // run.push_back(813);
+  // run.push_back(814);
+  // run.push_back(820);
+  // run.push_back(821);
+  // const char *fileNameDUTPosition = "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/DUTpositions/DUTPos_runlist_W3R08_M106.txt";
+
+  // run.push_back(705);
+  // run.push_back(723);
+  // run.push_back(724);
+  // run.push_back(725);
+  // run.push_back(726);
+  // run.push_back(727);
+  // run.push_back(730);
+  // run.push_back(769);
+  // run.push_back(772);
+  // run.push_back(779);
+  // run.push_back(780);
+  // run.push_back(781);
+  // run.push_back(785);
+  // const char *fileNameDUTPosition = "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/DUTpositions/DUTPos_runlist_W3R12_M106.txt";
+
+  run.push_back(732);
+  run.push_back(735);
+  run.push_back(736);
+  run.push_back(737);
+  run.push_back(738);
+  run.push_back(739);
+  run.push_back(742);
+  run.push_back(743);
+  run.push_back(744);
+  run.push_back(745);
+  run.push_back(746);
+  run.push_back(748);
+  const char *fileNameDUTPosition = "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/DUTpositions/DUTPos_runlist_W3R14_M106.txt";
+
+  // run.push_back(530);
+  // run.push_back(541);
+  // run.push_back(548);
+  // run.push_back(556);
+  // run.push_back(559);
+  // run.push_back(561);
+  // run.push_back(564);
+  // run.push_back(567);
+  // run.push_back(570);
+  // run.push_back(580);
+  // run.push_back(583);
+  // run.push_back(596);
+  // run.push_back(606);
+  // run.push_back(609);
+  // const char *fileNameDUTPosition = "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/DUTpositions/DUTPos_runlist_W3R12_M112.txt";
+
+  //  run.push_back(323);
+  //  run.push_back(324);
+  //  const char *fileNameDUTPosition = "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/DUTpositions/DUTPos_runlist_W3R14_M112.txt";
+
+  // run.push_back(329);
+  // run.push_back(352);
+  // run.push_back(353);
+  // run.push_back(373);
+  // run.push_back(374);
+  // run.push_back(450);
+  // run.push_back(491);
+  // run.push_back(495);
+  // run.push_back(498);
+  // run.push_back(501);
+  // run.push_back(505);
+  // run.push_back(512);
+  // run.push_back(515);
+  // run.push_back(518);
+  // run.push_back(521);
+  // run.push_back(524);
+  // run.push_back(527);
+  //  const char *fileNameDUTPosition = "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/DUTpositions/DUTPos_runlist_W3R12_M129.txt";
+
+  //  run.push_back(389);
+  //  const char *fileNameDUTPosition = "/afs/cern.ch/work/f/fdachs/public/TB2017/Analysis/tbInvestigatorAnalysis/scripts/efficiency2/DUTpositions/DUTPos_runlist_W3R14_M129.txt";
+
+  TH1F *h1Landau = new TH1F("Landau fit to unselected data", "Landau fit to unselected data", 320, 0, 32000);
+  TH1F *h1LandauSelected = new TH1F("Landau fit to selected data", "Landau fit to selected data", 320, 0, 32000);
+  TH2F *h2LandauVsRiseTime = new TH2F("h2LandauVsRiseTime", "Landau vs rise time", 320, 0, 32000, 100, 0, 100);
+  TH2F *h2LandauVsRiseTimeSelected = new TH2F("h2LandauVsRiseTimeSelected", "Landau vs rise time", 320, 0, 32000, 100, 0, 100);
+  TH1F *h1LandauCluster = new TH1F("Landau fit to unselected data", "Landau fit to unselected data", 320, 0, 32000);
+  TH1F *h1LandauClusterSelected = new TH1F("Landau fit to selected data", "Landau fit to selected data", 320, 0, 32000);
+  TH2F *h2LandauClusterVsRiseTime = new TH2F("h2LandauClusterVsRiseTime", "Landau vs rise time", 320, 0, 32000, 100, 0, 100);
+  TH2F *h2LandauClusterVsRiseTimeSelected = new TH2F("h2LandauClusterVsRiseTimeSelected", "Landau vs rise time", 320, 0, 32000, 100, 0, 100);
+
+  for(unsigned int iRun=0; iRun<run.size(); iRun++){
+    if(Landau(run[iRun], fileNameDUTPosition,
+	      h1Landau, h1LandauSelected, 
+	      h2LandauVsRiseTime, h2LandauVsRiseTimeSelected,
+	      h1LandauCluster, h1LandauClusterSelected, 
+	      h2LandauClusterVsRiseTime, h2LandauClusterVsRiseTimeSelected) != 0){
+      cout << __PRETTY_FUNCTION__ << ": WARNING!!! - run " << run[iRun] << " could not be processed" << endl;
+    }
+  }
+
+  h1LandauSelected -> Fit("landau");
   gStyle -> SetOptFit(1);
   gStyle -> SetOptTitle(0);
+  gStyle -> SetPadTopMargin(0.1);
+  gStyle -> SetPadRightMargin(0.1);
+  gStyle -> SetPadBottomMargin(0.12);
+  gStyle -> SetPadLeftMargin(0.12);
+
   TCanvas *cc =  new TCanvas("cc", "cc", 0, 0, 1000, 1000);
   h1Landau -> SetLineColor(1);
   h1Landau -> SetLineWidth(6);
   h1Landau -> GetXaxis() -> SetTitle("Uncalibrated signal S #left[a.u.#right]");
+  h1Landau -> GetXaxis() -> SetTitleOffset(1.4);
   h1Landau -> GetYaxis() -> SetTitle("#frac{dN}{dS} #left[a.u.^{-1}#right]");
+  h1Landau -> GetYaxis() -> SetTitleOffset(1.4);
   h1Landau -> Draw();
   h1LandauSelected -> SetLineColor(3);
   h1LandauSelected -> SetLineWidth(2);
   h1LandauSelected -> Draw("same");
-  h1LandauSelected -> Fit("landau");
 
-  char name[1000];
-  sprintf(name, "tmp/run%d.png", run);
-  cc -> SaveAs(name);
+  TLegend *leg = new TLegend(0.4869478,0.2669405,0.8795181,0.3921971);
+  leg -> SetFillColor(0);
+  leg -> SetFillStyle(0);
+  leg -> SetLineColor(0);
+  leg -> AddEntry(h1Landau, "before selection", "l");
+  leg -> AddEntry(h1LandauSelected, "after selection", "l");
+  leg -> Draw("same");
 
-  return 0;
+  cc -> SaveAs("tmp/Landau.png");
+  cc -> SaveAs("tmp/Landau.root");
+
+  h2LandauVsRiseTime -> Draw("colz");
+  cc -> SaveAs("tmp/LandauVsRiseTime.png");
+  cc -> SaveAs("tmp/LandauVsRiseTime.root");
+
+  h2LandauVsRiseTimeSelected -> Draw("colz");
+  cc -> SaveAs("tmp/LandauVsRiseTimeSelected.png");
+  cc -> SaveAs("tmp/LandauVsRiseTimeSelected.root");
+
+  h1LandauClusterSelected -> Fit("landau");
+  gStyle -> SetOptFit(1);
+  gStyle -> SetOptTitle(0);
+  gStyle -> SetPadTopMargin(0.1);
+  gStyle -> SetPadRightMargin(0.1);
+  gStyle -> SetPadBottomMargin(0.12);
+  gStyle -> SetPadLeftMargin(0.12);
+
+  h1LandauCluster -> SetLineColor(1);
+  h1LandauCluster -> SetLineWidth(6);
+  h1LandauCluster -> GetXaxis() -> SetTitle("Uncalibrated signal S #left[a.u.#right]");
+  h1LandauCluster -> GetXaxis() -> SetTitleOffset(1.4);
+  h1LandauCluster -> GetYaxis() -> SetTitle("#frac{dN}{dS} #left[a.u.^{-1}#right]");
+  h1LandauCluster -> GetYaxis() -> SetTitleOffset(1.4);
+  h1LandauCluster -> Draw();
+  h1LandauClusterSelected -> SetLineColor(3);
+  h1LandauClusterSelected -> SetLineWidth(2);
+  h1LandauClusterSelected -> Draw("same");
+
+  leg = new TLegend(0.4869478,0.2669405,0.8795181,0.3921971);
+  leg -> SetFillColor(0);
+  leg -> SetFillStyle(0);
+  leg -> SetLineColor(0);
+  leg -> AddEntry(h1LandauCluster, "before selection", "l");
+  leg -> AddEntry(h1LandauClusterSelected, "after selection", "l");
+  leg -> Draw("same");
+
+  cc -> SaveAs("tmp/LandauCluster.png");
+  cc -> SaveAs("tmp/LandauCluster.root");
+
+  h2LandauClusterVsRiseTime -> Draw("colz");
+  cc -> SaveAs("tmp/LandauClusterVsRiseTime.png");
+  cc -> SaveAs("tmp/LandauClusterVsRiseTime.root");
+
+  h2LandauClusterVsRiseTimeSelected -> Draw("colz");
+  cc -> SaveAs("tmp/LandauClusterVsRiseTimeSelected.png");
+  cc -> SaveAs("tmp/LandauClusterVsRiseTimeSelected.root");
 
   //////////////////
   // cleaning memory
   //////////////////
   cout << __PRETTY_FUNCTION__ << ": cleaning memory" << endl;
-  delete cfg;
   delete cc;
+  delete h1LandauCluster;
+  delete h1LandauClusterSelected;
+  delete h2LandauClusterVsRiseTime;
+  delete h2LandauClusterVsRiseTimeSelected;
   delete h1Landau;
   delete h1LandauSelected;
+  delete h2LandauVsRiseTime;
+  delete h2LandauVsRiseTimeSelected;
 
   return 0;
 }
