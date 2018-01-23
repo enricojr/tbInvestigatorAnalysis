@@ -43,6 +43,8 @@ int convertDUT(const char *fileNameIn,
 	       const unsigned int nEvents,
 	       const unsigned int startEvent = 0){
 
+  const bool savePlots = false;
+
   gStyle -> SetOptFit(1);
   
   /////////////////////////////
@@ -96,6 +98,8 @@ int convertDUT(const char *fileNameIn,
   tree -> Branch("pulseCharge", &pulseCharge);
   Float_t pulseRedChi2 = 0.;
   tree -> Branch("pulseRedChi2", &pulseRedChi2);  
+  Float_t pulseNoise = 0.;
+  tree -> Branch("pulseNoise", &pulseNoise);
 
   /////////////////////
   // initializing plots
@@ -292,6 +296,7 @@ int convertDUT(const char *fileNameIn,
 	  pulseDecay = fitWaveform -> getPulseDecay();
 	  pulseCharge = fitWaveform -> getPulseCharge();
 	  pulseRedChi2 = fitWaveform -> getPulseRedChi2();
+	  pulseNoise = fitWaveform -> getPulseNoise();
 	  fitWaveform -> reset();	  
 	}
 
@@ -310,15 +315,17 @@ int convertDUT(const char *fileNameIn,
 	      h2LinearSelectedWaveforms[iDRS][iCH] -> Fill(iSample, waveform[iSample]);
 	    }
 	    if(pulseT0 > cfg -> _pulseT0Range[iDRS][iCH].min && pulseT0 < cfg -> _pulseT0Range[iDRS][iCH].max // selection from pulse fit
-	       &&
-	       pulseRiseTime > cfg -> _pulseRiseTimeRange.min && pulseRiseTime < cfg -> _pulseRiseTimeRange.max
-	       &&
-	       pulseRedChi2 < cfg -> _pulseRedChi2Threshold){
+	       //	       &&
+	       //	       pulseRiseTime > cfg -> _pulseRiseTimeRange.min && pulseRiseTime < cfg -> _pulseRiseTimeRange.max
+	       //	       &&
+	       //	       pulseRedChi2 < cfg -> _pulseRedChi2Threshold
+	       ){
 	      for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
 		h2PulseSelectedWaveforms[iDRS][iCH] -> Fill(iSample, waveform[iSample]);
 	      }
 	    }
 	    else{
+	      if(savePlots) fitWaveform -> fit(waveform, cfg, eventNumber, iDRS, iCH, h1Noise, true);
 	      for(unsigned int iSample=0; iSample<NDRSSAMPLES; iSample++){
 		h2PulseExcludedWaveforms[iDRS][iCH] -> Fill(iSample, waveform[iSample]);
 	      }
@@ -360,9 +367,9 @@ int convertDUT(const char *fileNameIn,
   cout << __PRETTY_FUNCTION__ << ": computing noise" << endl;
   double **noise = new double*[cfg -> _nDRS];
   double **noiseError = new double*[cfg -> _nDRS];
-  //  TF1 ***fNoise = new TF1**[cfg -> _nDRS];
+  TF1 ***fNoise = new TF1**[cfg -> _nDRS];
   for(unsigned int iDRS=0; iDRS<cfg -> _nDRS; iDRS++){
-    //    fNoise[iDRS] = new TF1*[cfg -> _nCH[iDRS]];
+    fNoise[iDRS] = new TF1*[cfg -> _nCH[iDRS]];
     noise[iDRS] = new double[cfg -> _nCH[iDRS]];
     noiseError[iDRS] = new double[cfg -> _nCH[iDRS]];
     for(unsigned int iCH=0; iCH<cfg -> _nCH[iDRS]; iCH++){

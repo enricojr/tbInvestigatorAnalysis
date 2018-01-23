@@ -18,7 +18,8 @@ public:
 	   const unsigned int iEvent,
 	   const unsigned int iDRS,
 	   const unsigned int iCH,
-	   TH1F ***h1Noise);
+	   TH1F ***h1Noise,
+	   const bool savePlot = false);
   void fillNoiseHistogram(const double *waveform, 
 			  configClass *cfg,
 			  const unsigned int iEvent,
@@ -41,6 +42,7 @@ public:
   double getPulseDecay() const;
   double getPulseCharge() const;
   double getPulseRedChi2() const;
+  double getPulseNoise() const;
 private:
   TH1F *_h1Waveform;
   unsigned int _nSamples;
@@ -63,6 +65,7 @@ private:
   double _pulseDecay;
   double _pulseCharge;
   double _pulseRedChi2;
+  double _pulseNoise;
   void init(const unsigned int nSamples);
   void setWaveform(const double *waveform);
   void computePeakToPeak();
@@ -74,7 +77,8 @@ private:
   void fitPulse(configClass *cfg,
 		const unsigned int iEvent,
 		const unsigned int iDRS,
-		const unsigned int iCH);		
+		const unsigned int iCH,
+		const bool savePlot = false);		
 };
 
 fitWaveformClass::fitWaveformClass(const unsigned int nSamples){
@@ -140,6 +144,7 @@ void fitWaveformClass::print() const{
   cout << __PRETTY_FUNCTION__ << ": pulseDecay = " << _pulseDecay << endl;
   cout << __PRETTY_FUNCTION__ << ": pulseCharge = " << _pulseCharge << endl;
   cout << __PRETTY_FUNCTION__ << ": pulseChi2 = " << _pulseRedChi2 << endl;
+  cout << __PRETTY_FUNCTION__ << ": pulseNoise = " << _pulseNoise << endl;
   cout << endl;
   return ;
 }
@@ -206,6 +211,10 @@ double fitWaveformClass::getPulseCharge() const{
 
 double fitWaveformClass::getPulseRedChi2() const{
   return _pulseRedChi2;
+}
+
+double fitWaveformClass::getPulseNoise() const{
+  return _pulseNoise;
 }
 
 void fitWaveformClass::setWaveform(const double *waveform){
@@ -275,7 +284,8 @@ void fitWaveformClass::fitLinear(configClass *cfg,
 void fitWaveformClass::fitPulse(configClass *cfg,
 				const unsigned int iEvent,
 				const unsigned int iDRS,
-				const unsigned int iCH){				
+				const unsigned int iCH,
+				const bool savePlot){				
   // function
   TF1 *fPulse = new TF1("fPulse", "[0]+[1]*x + 0.5*[2]*(1+TMath::Erf(100*(x-[3])))*(1-exp(-(x-[3])/[4]))*(1.+[5]*(x-[3]))", cfg -> _pulse[iDRS][iCH].min, cfg -> _pulse[iDRS][iCH].max);
   fPulse -> SetParNames("offset", "slope", "amplitude", "T0", "riseTime", "decay");
@@ -307,7 +317,16 @@ void fitWaveformClass::fitPulse(configClass *cfg,
   _pulseRiseTime = fPulse -> GetParameter(4);
   _pulseDecay = fPulse -> GetParameter(5);
   _pulseRedChi2 = fPulse -> GetChisquare() / fPulse -> GetNDF();
-  if(false){
+  // computing noise as RMS from fit function in fit range. Relies on the fact that the i index is also the range index
+  _pulseNoise = 0.;
+  unsigned int count = 0;
+  for(unsigned int i=cfg -> _pulse[iDRS][iCH].min; i<= cfg -> _pulse[iDRS][iCH].max; i++){
+    const double diff = fPulse -> Eval(i) - _h1Waveform -> GetBinContent(i+1);
+    _pulseNoise += (diff * diff);
+    count ++;
+  }
+  _pulseNoise = sqrt(_pulseNoise / (double)count);
+  if(savePlot){
     gStyle -> SetOptStat(0);
     gStyle -> SetOptFit(0);
     TCanvas *cc = new TCanvas("cc", "cc", 0, 0, 1000, 1000);
@@ -323,12 +342,15 @@ void fitWaveformClass::fitPulse(configClass *cfg,
   return ;
 }
 
+
+
 void fitWaveformClass::fit(const double *waveform,
 			   configClass *cfg,
 			   const unsigned int iEvent,
 			   const unsigned int iDRS,
 			   const unsigned int iCH,
-			   TH1F ***h1Noise){
+			   TH1F ***h1Noise,
+			   const bool savePlot){
 
   const bool debugLevel = 1;
 
@@ -338,7 +360,7 @@ void fitWaveformClass::fit(const double *waveform,
   computeNoise();
   fitLinear(cfg, iDRS, iCH);
   if(_linearRedChi2 > cfg -> _linearRedChi2Threshold){
-    fitPulse(cfg, iEvent, iDRS, iCH);
+    fitPulse(cfg, iEvent, iDRS, iCH, savePlot);
   }
   else{
     fillNoiseHistogram(waveform, cfg, iEvent, iDRS, iCH, h1Noise);
